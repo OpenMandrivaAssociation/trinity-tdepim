@@ -1,6 +1,8 @@
-#
-# Please submit bugfixes or comments via http://www.trinitydesktop.org/
-#
+%bcond clang 1
+%bcond kitchensync 0
+%bcond gamin 1
+%bcond gnokii 1
+%bcond xscreensaver 1
 
 # BUILD WARNING:
 #  Remove qt-devel and qt3-devel and any kde*-devel on your system !
@@ -11,6 +13,8 @@
 %if "%{?tde_version}" == ""
 %define tde_version 14.1.5
 %endif
+%define pkg_rel 2
+
 %define tde_pkg tdepim
 %define tde_prefix /opt/trinity
 %define tde_bindir %{tde_prefix}/bin
@@ -24,33 +28,23 @@
 %define tde_tdeincludedir %{tde_includedir}/tde
 %define tde_tdelibdir %{tde_libdir}/trinity
 
-%if 0%{?mdkversion}
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
 %define _disable_rebuild_configure 1
-%endif
 
 # fixes error: Empty %files file …/debugsourcefiles.list
 %define _debugsource_template %{nil}
 
 %define tarball_name %{tde_pkg}-trinity
-%global toolchain %(readlink /usr/bin/cc)
-
-# TDEPIM optional features
-#define		with_kitchensync 1
 
 Name:		trinity-%{tde_pkg}
 Summary:	Personal Information Management apps from the official Trinity release
 Version:	%{tde_version}
-Release:	%{?!preversion:1}%{?preversion:0_%{preversion}}%{?dist}
+Release:	%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
 Group:		Applications/Productivity
 URL:		http://www.trinitydesktop.org/
 
-%if 0%{?suse_version}
-License:	GPL-2.0+
-%else
 License:	GPLv2+
-%endif
 
 #Vendor:		Trinity Desktop
 #Packager:	Francois Andriot <francois.andriot@free.fr>
@@ -60,7 +54,29 @@ Prefix:		%{tde_prefix}
 Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
 Source1:	%{name}-rpmlintrc
 
-BuildRequires:  cmake make
+BuildSystem:    cmake
+BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
+BuildOption:    -DCMAKE_SKIP_RPATH=OFF
+BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
+BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
+BuildOption:    -DCMAKE_NO_BUILTIN_CHRPATH=ON
+BuildOption:    -DCMAKE_PROGRAM_PATH="%{tde_bindir}"
+BuildOption:    -DCMAKE_INSTALL_PREFIX=%{tde_prefix}
+BuildOption:    -DBIN_INSTALL_DIR=%{tde_bindir}
+BuildOption:    -DCONFIG_INSTALL_DIR="%{tde_confdir}"
+BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir}
+BuildOption:    -DLIB_INSTALL_DIR=%{tde_libdir}
+BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_datadir}
+BuildOption:    -DWITH_ARTS=ON -DWITH_SASL=ON -DWITH_NEWDISTRLISTS=ON
+BuildOption:    -DWITH_EXCHANGE=ON -DWITH_EGROUPWARE=ON -DWITH_KOLAB=ON
+BuildOption:    -DWITH_SLOX=ON -DWITH_GROUPWISE=ON -DWITH_FEATUREPLAN=ON 
+BuildOption:    -DWITH_GROUPDAV=ON -DWITH_BIRTHDAYS=ON -DWITH_NEWEXCHANGE=ON
+BuildOption:    -DWITH_SCALIX=ON -DWITH_CALDAV=ON -DWITH_CARDDAV=ON 
+BuildOption:    -DWITH_INDEXLIB=ON -DBUILD_ALL=ON
+%{?with_gnokii:BuildOption:    -DWITH_GNOKII=ON}
+%{?with_xscreensaver:BuildOption:    -DWITH_XSCREENSAVER=ON}
+%{?with_kitchensync:BuildOption:    -DBUILD_KITCHENSYNC=ON}
 
 BuildRequires:	trinity-arts-devel >= %{tde_epoch}:1.5.10
 BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
@@ -69,12 +85,11 @@ BuildRequires:	libcaldav-devel >= %{tde_epoch}:0.6.5
 BuildRequires:	libcarddav-devel >= %{tde_epoch}:0.6.2
 
 BuildRequires:	trinity-tde-cmake >= %{tde_version}
-%if "%{?toolchain}" != "clang"
-BuildRequires:	gcc-c++
-%endif
+
+%{!?with_clang:BuildRequires:	gcc-c++}
+
 BuildRequires:	fdupes
 BuildRequires:	desktop-file-utils
-BuildRequires:	make
 
 BuildRequires:	pkgconfig(gpgme)
 BuildRequires:	flex
@@ -96,31 +111,11 @@ BuildRequires:  pkgconfig(openssl)
 # ACL support
 BuildRequires:  pkgconfig(libacl)
 
-# SUSE desktop files utility
-%if 0%{?suse_version}
-BuildRequires:	update-desktop-files
-%endif
-
-%if 0%{?opensuse_bs} && 0%{?suse_version}
-# for xdg-menu script
-BuildRequires:	brp-check-trinity
-%endif
-
 # GAMIN support
-#  Not on openSUSE.
-%if 0%{?!suse_version}
-%define with_gamin 1
-BuildRequires:	pkgconfig(gamin)
-%endif
+%{?with_gamin:BuildRequires:	pkgconfig(gamin)}
 
 # KDEPIM specific features
-%define with_gnokii 1
-BuildRequires:  pkgconfig(gnokii)
-
-# FLEX support
-%if 0%{?fedora} >= 15
-BuildRequires:	flex-static
-%endif
+%{?with_gnokii:BuildRequires:  pkgconfig(gnokii)}
 
 # BISON support
 BuildRequires:	bison
@@ -143,40 +138,10 @@ BuildRequires:  pkgconfig(xcomposite)
 #  RHEL 7: available in NUX
 #  RHEL 8: available in EPEL
 #  RHEL 9: available in EPEL
-%if 0%{?fedora} || 0%{?mgaversion} || 0%{?mdkversion} || 0%{?rhel} >= 5 || 0%{?suse_version}
-%define with_xscreensaver 1
-
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{with xscreensaver}
 BuildRequires:	xscreensaver
 BuildRequires:	xscreensaver-base
-BuildRequires:	xscreensaver-extras
-%if 0%{?fedora}
-BuildRequires:	xscreensaver-extras-base
-%endif
-BuildRequires:	xscreensaver-gl-base
-BuildRequires:	xscreensaver-gl-extras
-%endif
-
-%if 0%{?suse_version}
-BuildRequires:	xscreensaver
-BuildRequires:	xscreensaver-data
-BuildRequires:	xscreensaver-data-extra
-%endif
-
-%if 0%{?mgaversion} || 0%{?mdkversion}
-%if 0%{?mgaversion} >= 4
-BuildRequires:	%{_lib}xscrnsaver-devel
-%else
-BuildRequires:	%{_lib}xscrnsaver%{?mgaversion:1}-devel
-%endif
-BuildRequires:	xscreensaver
-BuildRequires:	xscreensaver-base
-%if 0%{?pclinuxos} == 0
-BuildRequires:	xscreensaver-extrusion
-%endif
 BuildRequires:	xscreensaver-gl
-%endif
-
 BuildRequires:  pkgconfig(xscrnsaver)
 %endif
 
@@ -794,7 +759,7 @@ Kolab, and SUSE Linux Openexchange servers.
 
 ##########
 
-%if 0%{?with_kitchensync}
+%if %{with kitchensync}
 %package -n trinity-kitchensync
 Summary:	Synchronization framework
 Group:		Applications/Communications
@@ -825,24 +790,8 @@ Summary:	Trinity Certificate Manager
 Group:		Applications/Communications
 
 # GPG support
-%if 0%{?suse_version}
-Requires:	gpg2
-%endif
-%if 0%{?rhel} == 4
-Requires:	gnupg
-%endif
-%if 0%{?rhel} >= 5 || 0%{?fedora} || 0%{?mdkversion} || 0%{?mgaversion}
-Requires:	gnupg2
-%endif
-
-%if 0%{?rhel} >= 5 || 0%{?fedora} || 0%{?mdkversion} || 0%{?mgaversion} || 0%{?suse_version}
 Requires:	pinentry
-%if 0%{?mdkver}
 Requires:	gnupg
-%else
-Requires:	dirmngr
-%endif
-%endif
 
 %description -n trinity-kleopatra
 Kleopatra is the TDE tool for managing X.509 certificates in the gpgsm
@@ -869,7 +818,7 @@ keybox and for retrieving certificates from LDAP servers.
 %package -n trinity-kmail
 Summary:	Trinity Email client
 Group:		Applications/Communications
-%if 0%{?mgaversion} || 0%{?mdkversion} || 0%{?pclinuxos}
+
 Requires:       %{_lib}sasl2-plug-anonymous
 Requires:       %{_lib}sasl2-plug-crammd5
 Requires:       %{_lib}sasl2-plug-digestmd5
@@ -878,25 +827,14 @@ Requires:       %{_lib}sasl2-plug-ldapdb
 Requires:       %{_lib}sasl2-plug-login
 Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
-%endif
 Requires:	%{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:	trinity-tdebase-tdeio-pim-plugins >= %{tde_version}
 
 # GPG support
-%if 0%{?suse_version}
-Requires:	gpg2
-%endif
-%if 0%{?rhel} == 4
 Requires:	gnupg
-%endif
-%if 0%{?rhel} >= 5 || 0%{?fedora} || 0%{?mdkversion} || 0%{?mgaversion}
-Requires:	gnupg2
-%endif
 
 # Pinentry
-%if 0%{?suse_version} || 0%{?rhel} >= 5 || 0%{?fedora} || 0%{?mdkversion} || 0%{?mgaversion}
 Requires:	pinentry
-%endif
 
 Requires:	procmail
 Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -1322,7 +1260,7 @@ Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
 %package -n trinity-korn
 Summary:	Trinity mail checker
 Group:		Applications/Communications
-%if 0%{?mgaversion} || 0%{?mdkversion} || 0%{?pclinuxos}
+
 Requires:       %{_lib}sasl2-plug-anonymous
 Requires:       %{_lib}sasl2-plug-crammd5
 Requires:       %{_lib}sasl2-plug-digestmd5
@@ -1331,7 +1269,6 @@ Requires:       %{_lib}sasl2-plug-ldapdb
 Requires:       %{_lib}sasl2-plug-login
 Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
-%endif
 Requires:	%{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description -n trinity-korn
@@ -1854,108 +1791,20 @@ dialing calls, phonebook, and phone status monitoring.
 %{tde_libdir}/libkmobiledevice.so
 %{tde_tdedocdir}/HTML/en/kmobile/
 
-##########
-
-%if 0%{?suse_version} && 0%{?opensuse_bs} == 0
-%debug_package
-%endif
-
-##########
-
-%prep
-%autosetup -p1 -n %{tarball_name}-%{version}%{?preversion:~%{preversion}}
-
+%prep -a
 # Fix 'ical2vcal' contains '/bin/perl' instead of '/usr/bin/perl'
 if [ -x /usr/bin/perl ]; then
   %__sed -i "korganizer/ical2vcal.in" -e "s|@PERL@|/usr/bin/perl|"
 fi
 
 
-%build
+%conf -p
 unset QTDIR QTINC QTLIB
 export PATH="%{tde_bindir}:${PATH}"
 export PKG_CONFIG_PATH="%{tde_libdir}/pkgconfig"
 
-# Specific path for RHEL4
-if [ -d "/usr/X11R6" ]; then
-  export RPM_OPT_FLAGS="${RPM_OPT_FLAGS} -I/usr/X11R6/include -L/usr/X11R6/%{_lib}"
-fi
 
-if ! rpm -E %%cmake|grep -e 'cd build\|cd ${CMAKE_BUILD_DIR:-build}'; then
-  %__mkdir_p build
-  cd build
-fi
-
-# Warning: GCC visibility causes FTBFS [Bug #1285]
-%cmake \
-  -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-  -DCMAKE_C_FLAGS="${RPM_OPT_FLAGS}" \
-  -DCMAKE_CXX_FLAGS="${RPM_OPT_FLAGS}" \
-  -DCMAKE_SKIP_RPATH=OFF \
-  -DCMAKE_SKIP_INSTALL_RPATH=OFF \
-  -DCMAKE_INSTALL_RPATH="%{tde_libdir}" \
-  -DCMAKE_NO_BUILTIN_CHRPATH=ON \
-  -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DCMAKE_PROGRAM_PATH="%{tde_bindir}" \
-  -DWITH_GCC_VISIBILITY=OFF \
-  \
-  -DCMAKE_INSTALL_PREFIX=%{tde_prefix} \
-  -DBIN_INSTALL_DIR=%{tde_bindir} \
-  -DCONFIG_INSTALL_DIR="%{tde_confdir}" \
-  -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir} \
-  -DLIB_INSTALL_DIR=%{tde_libdir} \
-  -DSHARE_INSTALL_PREFIX=%{tde_datadir} \
-  \
-  -DWITH_ARTS=ON \
-  -DWITH_SASL=ON \
-  -DWITH_NEWDISTRLISTS=ON  \
-  %{?with_gnokii:-DWITH_GNOKII=ON} \
-  -DWITH_EXCHANGE=ON \
-  -DWITH_EGROUPWARE=ON \
-  -DWITH_KOLAB=ON \
-  -DWITH_SLOX=ON \
-  -DWITH_GROUPWISE=ON \
-  -DWITH_FEATUREPLAN=ON \
-  -DWITH_GROUPDAV=ON \
-  -DWITH_BIRTHDAYS=ON \
-  -DWITH_NEWEXCHANGE=ON \
-  -DWITH_SCALIX=ON \
-  -DWITH_CALDAV=ON \
-  -DWITH_CARDDAV=ON \
-  -DWITH_INDEXLIB=ON \
-  %{?with_xscreensaver:-DWITH_XSCREENSAVER=ON} \
-  %{?with_kitchensync:-DBUILD_KITCHENSYNC=ON} \
-  -DBUILD_ALL=ON \
-  ..
-
-%__make %{?_smp_mflags} || %__make
-
-
-%install
-export PATH="%{tde_bindir}:${PATH}"
-%__make install DESTDIR=%{?buildroot} -C build
-
-# Updates applications categories for openSUSE
-%if 0%{?suse_version}
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/akregator.desktop       Network  RSS-News
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/groupwarewizard.desktop Utility  DesktopSettings X-TDE-Utilities-PIM
-%suse_update_desktop_file       %{?buildroot}%{tde_tdeappdir}/kaddressbook.desktop
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/kalarm.desktop          Utility  TimeUtility X-TDE-Utilities-PIM
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/kandy.desktop           Utility  Telephony X-TDE-Utilities-Peripherals
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/karm.desktop            Utility  TimeUtility X-TDE-Utilities-PIM
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/kleopatra.desktop       Network  System
-%suse_update_desktop_file       %{?buildroot}%{tde_tdeappdir}/KNode.desktop
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/knotes.desktop          Utility  DesktopUtility X-TDE-Utilities-Desktop
-%suse_update_desktop_file       %{?buildroot}%{tde_tdeappdir}/KMail.desktop
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/Kontact.desktop         Office   Core-Office
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/korganizer.desktop      Office   Calendar
-%suse_update_desktop_file -r    %{?buildroot}%{tde_tdeappdir}/KOrn.desktop            Utility  Applet X-TDE-More
-%suse_update_desktop_file -u    %{?buildroot}%{tde_tdeappdir}/ktnef.desktop           Network  Email
-%if 0%{?with_kitchensync}
-%suse_update_desktop_file       %{?buildroot}%{tde_tdeappdir}/kitchensync.desktop     Utility  X-SuSE-SyncUtility
-%endif
-%endif
-
+%install -a
 # Adds missing icons in 'hicolor' theme
 pushd "%{?buildroot}%{tde_datadir}/icons"
 for i in {16,32,48};           do %__cp crystalsvg/"$i"x"$i"/apps/kandy.png                           hicolor/"$i"x"$i"/apps/kandy.png      ;done
