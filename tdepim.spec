@@ -13,20 +13,11 @@
 %if "%{?tde_version}" == ""
 %define tde_version 14.1.5
 %endif
-%define pkg_rel 2
+%define pkg_rel 3
 
 %define tde_pkg tdepim
 %define tde_prefix /opt/trinity
-%define tde_bindir %{tde_prefix}/bin
-%define tde_confdir %{_sysconfdir}/trinity
-%define tde_datadir %{tde_prefix}/share
-%define tde_docdir %{tde_datadir}/doc
-%define tde_includedir %{tde_prefix}/include
-%define tde_libdir %{tde_prefix}/%{_lib}
-%define tde_tdeappdir %{tde_datadir}/applications/tde
-%define tde_tdedocdir %{tde_docdir}/tde
-%define tde_tdeincludedir %{tde_includedir}/tde
-%define tde_tdelibdir %{tde_libdir}/trinity
+
 
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
@@ -46,37 +37,28 @@ URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
-#Vendor:		Trinity Desktop
-#Packager:	Francois Andriot <francois.andriot@free.fr>
-
-Prefix:		%{tde_prefix}
 
 Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
 Source1:	%{name}-rpmlintrc
 
 BuildSystem:    cmake
+
 BuildOption:    -DCMAKE_BUILD_TYPE="RelWithDebInfo"
 BuildOption:    -DCMAKE_SKIP_RPATH=OFF
-BuildOption:    -DCMAKE_SKIP_INSTALL_RPATH=OFF
-BuildOption:    -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
-BuildOption:    -DCMAKE_INSTALL_RPATH="%{tde_libdir}"
-BuildOption:    -DCMAKE_NO_BUILTIN_CHRPATH=ON
-BuildOption:    -DCMAKE_PROGRAM_PATH="%{tde_bindir}"
 BuildOption:    -DCMAKE_INSTALL_PREFIX=%{tde_prefix}
-BuildOption:    -DBIN_INSTALL_DIR=%{tde_bindir}
-BuildOption:    -DCONFIG_INSTALL_DIR="%{tde_confdir}"
-BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_tdeincludedir}
-BuildOption:    -DLIB_INSTALL_DIR=%{tde_libdir}
-BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_datadir}
+BuildOption:    -DCONFIG_INSTALL_DIR=%{_sysconfdir}/trinity
+BuildOption:    -DINCLUDE_INSTALL_DIR=%{tde_prefix}/include/tde
+BuildOption:    -DSHARE_INSTALL_PREFIX=%{tde_prefix}/share
 BuildOption:    -DWITH_ARTS=ON -DWITH_SASL=ON -DWITH_NEWDISTRLISTS=ON
 BuildOption:    -DWITH_EXCHANGE=ON -DWITH_EGROUPWARE=ON -DWITH_KOLAB=ON
 BuildOption:    -DWITH_SLOX=ON -DWITH_GROUPWISE=ON -DWITH_FEATUREPLAN=ON 
 BuildOption:    -DWITH_GROUPDAV=ON -DWITH_BIRTHDAYS=ON -DWITH_NEWEXCHANGE=ON
 BuildOption:    -DWITH_SCALIX=ON -DWITH_CALDAV=ON -DWITH_CARDDAV=ON 
 BuildOption:    -DWITH_INDEXLIB=ON -DBUILD_ALL=ON
-%{?with_gnokii:BuildOption:    -DWITH_GNOKII=ON}
-%{?with_xscreensaver:BuildOption:    -DWITH_XSCREENSAVER=ON}
-%{?with_kitchensync:BuildOption:    -DBUILD_KITCHENSYNC=ON}
+BuildOption:    -DWITH_GCC_VISIBILITY=%{!?with_clang:ON}%{?with_clang:OFF}
+BuildOption:    -DWITH_GNOKII=%{!?with_gnokii:OFF}%{?with_gnokii:ON}
+BuildOption:    -DWITH_XSCREENSAVER=%{!?with_xscreensaver:OFF}%{?with_xscreensaver:ON}
+BuildOption:    -DBUILD_KITCHENSYNC=%{!?with_kitchensync:OFF}%{?with_kitchensync:ON}
 
 BuildRequires:	trinity-arts-devel >= %{tde_epoch}:1.5.10
 BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
@@ -235,7 +217,7 @@ It also contains the CMAKE macros.
 
 %files devel
 %defattr(-,root,root,-)
-%{tde_datadir}/cmake/*
+%{tde_prefix}/share/cmake/*
 
 ##########
 
@@ -252,27 +234,27 @@ thousands of internet feeds in a quick, efficient, and familiar way.
 
 %files -n trinity-akregator
 %defattr(-,root,root,-)
-%{tde_bindir}/akregator
-%{tde_tdelibdir}/libakregatorpart.la
-%{tde_tdelibdir}/libakregatorpart.so
-%{tde_tdelibdir}/libakregator_mk4storage_plugin.la
-%{tde_tdelibdir}/libakregator_mk4storage_plugin.so
-%{tde_libdir}/libakregatorprivate.so.*
-%{tde_tdeappdir}/akregator.desktop
-%{tde_datadir}/apps/akregator
-%{tde_datadir}/config.kcfg/akregator.kcfg
-%{tde_datadir}/config.kcfg/mk4config.kcfg
-%{tde_datadir}/icons/crystalsvg/*/actions/rss_tag.png
-%{tde_datadir}/icons/crystalsvg/16x16/apps/akregator_empty.png
-%{tde_datadir}/icons/hicolor/*/apps/akregator.png
-%{tde_datadir}/icons/hicolor/scalable/apps/akregator.svgz
-%{tde_datadir}/services/akregator_mk4storage_plugin.desktop
-%{tde_datadir}/services/akregator_part.desktop
-%{tde_datadir}/services/feed.protocol
-%{tde_datadir}/services/kontact/akregatorplugin*.desktop
-%{tde_datadir}/servicetypes/akregator_plugin.desktop
-%{tde_tdedocdir}/HTML/en/akregator/
-%{tde_tdedocdir}/HTML/en/tdeioslave/feed/
+%{tde_prefix}/bin/akregator
+%{tde_prefix}/%{_lib}/trinity/libakregatorpart.la
+%{tde_prefix}/%{_lib}/trinity/libakregatorpart.so
+%{tde_prefix}/%{_lib}/trinity/libakregator_mk4storage_plugin.la
+%{tde_prefix}/%{_lib}/trinity/libakregator_mk4storage_plugin.so
+%{tde_prefix}/%{_lib}/libakregatorprivate.so.*
+%{tde_prefix}/share/applications/tde/akregator.desktop
+%{tde_prefix}/share/apps/akregator
+%{tde_prefix}/share/config.kcfg/akregator.kcfg
+%{tde_prefix}/share/config.kcfg/mk4config.kcfg
+%{tde_prefix}/share/icons/crystalsvg/*/actions/rss_tag.png
+%{tde_prefix}/share/icons/crystalsvg/16x16/apps/akregator_empty.png
+%{tde_prefix}/share/icons/hicolor/*/apps/akregator.png
+%{tde_prefix}/share/icons/hicolor/scalable/apps/akregator.svgz
+%{tde_prefix}/share/services/akregator_mk4storage_plugin.desktop
+%{tde_prefix}/share/services/akregator_part.desktop
+%{tde_prefix}/share/services/feed.protocol
+%{tde_prefix}/share/services/kontact/akregatorplugin*.desktop
+%{tde_prefix}/share/servicetypes/akregator_plugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/akregator/
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/feed/
 
 ##########
 
@@ -286,9 +268,9 @@ Requires:	trinity-akregator = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-akregator-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/akregator/
-%{tde_libdir}/libakregatorprivate.la
-%{tde_libdir}/libakregatorprivate.so
+%{tde_prefix}/include/tde/akregator/
+%{tde_prefix}/%{_lib}/libakregatorprivate.la
+%{tde_prefix}/%{_lib}/libakregatorprivate.so
 
 ##########
 
@@ -316,43 +298,43 @@ LDAP servers, and SQL databases.
 
 %files -n trinity-kaddressbook
 %defattr(-,root,root,-)
-%{tde_bindir}/tdeabc2mutt
-%{tde_bindir}/kaddressbook
-%{tde_bindir}/tdeabcdistlistupdater
-%{tde_tdelibdir}/kcm_kabconfig.la
-%{tde_tdelibdir}/kcm_kabconfig.so
-%{tde_tdelibdir}/kcm_kabcustomfields.la
-%{tde_tdelibdir}/kcm_kabcustomfields.so
-%{tde_tdelibdir}/kcm_kabldapconfig.la
-%{tde_tdelibdir}/kcm_kabldapconfig.so
-%{tde_tdelibdir}/ldifvcardthumbnail.la
-%{tde_tdelibdir}/ldifvcardthumbnail.so
-%{tde_tdelibdir}/libkaddrbk_*.la
-%{tde_tdelibdir}/libkaddrbk_*.so
-%{tde_tdelibdir}/libkaddressbookpart.la
-%{tde_tdelibdir}/libkaddressbookpart.so
-%{tde_libdir}/libkabinterfaces.so.*
-%{tde_libdir}/libkaddressbook.so.*
-%{tde_tdeappdir}/kaddressbook.desktop
-%{tde_datadir}/apps/kaddressbook
-%{tde_datadir}/icons/hicolor/*/apps/kaddressbook.png
-%{tde_datadir}/services/kabconfig.desktop
-%{tde_datadir}/services/kabcustomfields.desktop
-%{tde_datadir}/services/kabldapconfig.desktop
-%{tde_datadir}/services/kaddressbook
-%{tde_datadir}/services/kontact/kaddressbookplugin.desktop
-%{tde_datadir}/services/tderesources/tdeabc/imap.desktop
-%{tde_datadir}/services/ldifvcardthumbnail.desktop
-%{tde_datadir}/servicetypes/dcopaddressbook.desktop
-%{tde_datadir}/servicetypes/kaddressbook_contacteditorwidget.desktop
-%{tde_datadir}/servicetypes/kaddressbookimprotocol.desktop
-%{tde_datadir}/servicetypes/kaddressbook_extension.desktop
-%{tde_datadir}/servicetypes/kaddressbook_view.desktop
-%{tde_datadir}/servicetypes/kaddressbook_xxport.desktop
-%{tde_tdedocdir}/HTML/en/kaddressbook/
-%{tde_datadir}/autostart/tdeabcdistlistupdater.desktop
-%{tde_tdeincludedir}/kaddressbook/
-%{tde_tdeincludedir}/tdeabc/
+%{tde_prefix}/bin/tdeabc2mutt
+%{tde_prefix}/bin/kaddressbook
+%{tde_prefix}/bin/tdeabcdistlistupdater
+%{tde_prefix}/%{_lib}/trinity/kcm_kabconfig.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kabconfig.so
+%{tde_prefix}/%{_lib}/trinity/kcm_kabcustomfields.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kabcustomfields.so
+%{tde_prefix}/%{_lib}/trinity/kcm_kabldapconfig.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kabldapconfig.so
+%{tde_prefix}/%{_lib}/trinity/ldifvcardthumbnail.la
+%{tde_prefix}/%{_lib}/trinity/ldifvcardthumbnail.so
+%{tde_prefix}/%{_lib}/trinity/libkaddrbk_*.la
+%{tde_prefix}/%{_lib}/trinity/libkaddrbk_*.so
+%{tde_prefix}/%{_lib}/trinity/libkaddressbookpart.la
+%{tde_prefix}/%{_lib}/trinity/libkaddressbookpart.so
+%{tde_prefix}/%{_lib}/libkabinterfaces.so.*
+%{tde_prefix}/%{_lib}/libkaddressbook.so.*
+%{tde_prefix}/share/applications/tde/kaddressbook.desktop
+%{tde_prefix}/share/apps/kaddressbook
+%{tde_prefix}/share/icons/hicolor/*/apps/kaddressbook.png
+%{tde_prefix}/share/services/kabconfig.desktop
+%{tde_prefix}/share/services/kabcustomfields.desktop
+%{tde_prefix}/share/services/kabldapconfig.desktop
+%{tde_prefix}/share/services/kaddressbook
+%{tde_prefix}/share/services/kontact/kaddressbookplugin.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/imap.desktop
+%{tde_prefix}/share/services/ldifvcardthumbnail.desktop
+%{tde_prefix}/share/servicetypes/dcopaddressbook.desktop
+%{tde_prefix}/share/servicetypes/kaddressbook_contacteditorwidget.desktop
+%{tde_prefix}/share/servicetypes/kaddressbookimprotocol.desktop
+%{tde_prefix}/share/servicetypes/kaddressbook_extension.desktop
+%{tde_prefix}/share/servicetypes/kaddressbook_view.desktop
+%{tde_prefix}/share/servicetypes/kaddressbook_xxport.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kaddressbook/
+%{tde_prefix}/share/autostart/tdeabcdistlistupdater.desktop
+%{tde_prefix}/include/tde/kaddressbook/
+%{tde_prefix}/include/tde/tdeabc/
 
 ##########
 
@@ -366,10 +348,10 @@ Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-kaddressbook-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkabinterfaces.la
-%{tde_libdir}/libkabinterfaces.so
-%{tde_libdir}/libkaddressbook.la
-%{tde_libdir}/libkaddressbook.so
+%{tde_prefix}/%{_lib}/libkabinterfaces.la
+%{tde_prefix}/%{_lib}/libkabinterfaces.so
+%{tde_prefix}/%{_lib}/libkaddressbook.la
+%{tde_prefix}/%{_lib}/libkaddressbook.so
 
 ##########
 
@@ -395,17 +377,17 @@ TDE-based, but will also run on other desktops.
 
 %files -n trinity-kalarm
 %defattr(-,root,root,-)
-%{tde_bindir}/kalarm
-%{tde_bindir}/kalarmd
-%{tde_tdeappdir}/kalarm.desktop
-%{tde_datadir}/applnk/.hidden/kalarmd.desktop
-%{tde_datadir}/applnk/Applications/kalarm.desktop
-%{tde_datadir}/apps/kalarm
-%{tde_datadir}/autostart/kalarm.tray.desktop
-%{tde_datadir}/autostart/kalarmd.autostart.desktop
-%{tde_datadir}/icons/crystalsvg/*/actions/kalarm.png
-%{tde_datadir}/icons/hicolor/*/apps/kalarm.png
-%{tde_tdedocdir}/HTML/en/kalarm/
+%{tde_prefix}/bin/kalarm
+%{tde_prefix}/bin/kalarmd
+%{tde_prefix}/share/applications/tde/kalarm.desktop
+%{tde_prefix}/share/applnk/.hidden/kalarmd.desktop
+%{tde_prefix}/share/applnk/Applications/kalarm.desktop
+%{tde_prefix}/share/apps/kalarm
+%{tde_prefix}/share/autostart/kalarm.tray.desktop
+%{tde_prefix}/share/autostart/kalarmd.autostart.desktop
+%{tde_prefix}/share/icons/crystalsvg/*/actions/kalarm.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kalarm.png
+%{tde_prefix}/share/doc/tde/HTML/en/kalarm/
 
 ##########
 
@@ -423,15 +405,15 @@ Kandy is aimed at mobile phones with integrated (GSM) modems.
 
 %files -n trinity-kandy
 %defattr(-,root,root,-)
-%{tde_bindir}/kandy
-%{tde_bindir}/kandy_client
-%{tde_tdeappdir}/kandy.desktop
-%{tde_datadir}/applnk/Utilities/kandy.desktop
-%{tde_datadir}/apps/kandy/
-%{tde_datadir}/icons/crystalsvg/*/apps/kandy.png
-%{tde_datadir}/icons/hicolor/*/apps/kandy.png
-%{tde_datadir}/config.kcfg/kandy.kcfg
-%{tde_tdedocdir}/HTML/en/kandy/
+%{tde_prefix}/bin/kandy
+%{tde_prefix}/bin/kandy_client
+%{tde_prefix}/share/applications/tde/kandy.desktop
+%{tde_prefix}/share/applnk/Utilities/kandy.desktop
+%{tde_prefix}/share/apps/kandy/
+%{tde_prefix}/share/icons/crystalsvg/*/apps/kandy.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kandy.png
+%{tde_prefix}/share/config.kcfg/kandy.kcfg
+%{tde_prefix}/share/doc/tde/HTML/en/kandy/
 
 ##########
 
@@ -445,18 +427,18 @@ time they spend on various tasks.
 
 %files -n trinity-karm
 %defattr(-,root,root,-)
-%{tde_bindir}/karm
-%{tde_libdir}/libkarm.so.*
-%{tde_tdelibdir}/libkarmpart.la
-%{tde_tdelibdir}/libkarmpart.so
-%{tde_tdeappdir}/karm.desktop
-%{tde_datadir}/applnk/Utilities/karm.desktop
-%{tde_datadir}/apps/karm/
-%{tde_datadir}/apps/karmpart/
-%{tde_datadir}/icons/hicolor/*/apps/karm.png
-%{tde_datadir}/services/karm_part.desktop
-%{tde_datadir}/services/kontact/karmplugin.desktop
-%{tde_tdedocdir}/HTML/en/karm/
+%{tde_prefix}/bin/karm
+%{tde_prefix}/%{_lib}/libkarm.so.*
+%{tde_prefix}/%{_lib}/trinity/libkarmpart.la
+%{tde_prefix}/%{_lib}/trinity/libkarmpart.so
+%{tde_prefix}/share/applications/tde/karm.desktop
+%{tde_prefix}/share/applnk/Utilities/karm.desktop
+%{tde_prefix}/share/apps/karm/
+%{tde_prefix}/share/apps/karmpart/
+%{tde_prefix}/share/icons/hicolor/*/apps/karm.png
+%{tde_prefix}/share/services/karm_part.desktop
+%{tde_prefix}/share/services/kontact/karmplugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/karm/
 
 ##########
 
@@ -469,8 +451,8 @@ Group:		Development/Libraries/Other
 
 %files -n trinity-karm-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkarm.so
-%{tde_libdir}/libkarm.la
+%{tde_prefix}/%{_lib}/libkarm.so
+%{tde_prefix}/%{_lib}/libkarm.la
 
 ##########
 
@@ -485,12 +467,12 @@ File dialog plugins for palm and vcf files.
 
 %files kfile-plugins
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/tdefile_ics.la
-%{tde_tdelibdir}/tdefile_ics.so
-%{tde_tdelibdir}/tdefile_vcf.la
-%{tde_tdelibdir}/tdefile_vcf.so
-%{tde_datadir}/services/tdefile_ics.desktop
-%{tde_datadir}/services/tdefile_vcf.desktop
+%{tde_prefix}/%{_lib}/trinity/tdefile_ics.la
+%{tde_prefix}/%{_lib}/trinity/tdefile_ics.so
+%{tde_prefix}/%{_lib}/trinity/tdefile_vcf.la
+%{tde_prefix}/%{_lib}/trinity/tdefile_vcf.so
+%{tde_prefix}/share/services/tdefile_ics.desktop
+%{tde_prefix}/share/services/tdefile_vcf.desktop
 
 ##########
 
@@ -508,27 +490,27 @@ and mbox.
 
 %files tdeio-plugins
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/tdeio_groupwise.la
-%{tde_tdelibdir}/tdeio_groupwise.so
-%{tde_tdelibdir}/tdeio_imap4.la
-%{tde_tdelibdir}/tdeio_imap4.so
-%{tde_tdelibdir}/tdeio_mbox.la
-%{tde_tdelibdir}/tdeio_mbox.so
-%{tde_tdelibdir}/tdeio_scalix.la
-%{tde_tdelibdir}/tdeio_scalix.so
-%{tde_tdelibdir}/tdeio_sieve.la
-%{tde_tdelibdir}/tdeio_sieve.so
-%{tde_datadir}/services/groupwise.protocol
-%{tde_datadir}/services/groupwises.protocol
-%{tde_datadir}/services/imap4.protocol
-%{tde_datadir}/services/imaps.protocol
-%{tde_datadir}/services/mbox.protocol
-%{tde_datadir}/services/scalix.protocol
-%{tde_datadir}/services/scalixs.protocol
-%{tde_datadir}/services/sieve.protocol
-%{tde_tdedocdir}/HTML/en/tdeioslave/groupwise/
-%{tde_tdedocdir}/HTML/en/tdeioslave/mbox/
-%{tde_tdedocdir}/HTML/en/tdeioslave/scalix/
+%{tde_prefix}/%{_lib}/trinity/tdeio_groupwise.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_groupwise.so
+%{tde_prefix}/%{_lib}/trinity/tdeio_imap4.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_imap4.so
+%{tde_prefix}/%{_lib}/trinity/tdeio_mbox.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_mbox.so
+%{tde_prefix}/%{_lib}/trinity/tdeio_scalix.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_scalix.so
+%{tde_prefix}/%{_lib}/trinity/tdeio_sieve.la
+%{tde_prefix}/%{_lib}/trinity/tdeio_sieve.so
+%{tde_prefix}/share/services/groupwise.protocol
+%{tde_prefix}/share/services/groupwises.protocol
+%{tde_prefix}/share/services/imap4.protocol
+%{tde_prefix}/share/services/imaps.protocol
+%{tde_prefix}/share/services/mbox.protocol
+%{tde_prefix}/share/services/scalix.protocol
+%{tde_prefix}/share/services/scalixs.protocol
+%{tde_prefix}/share/services/sieve.protocol
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/groupwise/
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/mbox/
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/scalix/
 
 ##########
 
@@ -552,101 +534,101 @@ tracking feature plans.
 
 %files tderesources
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/kcal_caldav.la
-%{tde_tdelibdir}/kcal_caldav.so
-%{tde_tdelibdir}/kcal_groupdav.la
-%{tde_tdelibdir}/kcal_groupdav.so
-%{tde_tdelibdir}/kcal_groupwise.la
-%{tde_tdelibdir}/kcal_groupwise.so
-%{tde_tdelibdir}/kcal_kolab.la
-%{tde_tdelibdir}/kcal_kolab.so
-%{tde_tdelibdir}/kcal_scalix.la
-%{tde_tdelibdir}/kcal_scalix.so
-%{tde_tdelibdir}/kcal_newexchange.la
-%{tde_tdelibdir}/kcal_newexchange.so
-%{tde_tdelibdir}/kcal_resourcefeatureplan.la
-%{tde_tdelibdir}/kcal_resourcefeatureplan.so
-%{tde_tdelibdir}/kcal_slox.la
-%{tde_tdelibdir}/kcal_slox.so
-%{tde_tdelibdir}/kcal_xmlrpc.la
-%{tde_tdelibdir}/kcal_xmlrpc.so
-%{tde_tdelibdir}/knotes_kolab.la
-%{tde_tdelibdir}/knotes_kolab.so
-%{tde_tdelibdir}/knotes_scalix.la
-%{tde_tdelibdir}/knotes_scalix.so
-%{tde_tdelibdir}/knotes_xmlrpc.la
-%{tde_tdelibdir}/knotes_xmlrpc.so
-%{tde_libdir}/libtdeabckolab.so.*
-%{tde_libdir}/libtdeabcscalix.so.*
-%{tde_libdir}/libtdeabc_groupdav.so.*
-%{tde_libdir}/libtdeabc_groupwise.so.*
-%{tde_libdir}/libtdeabc_newexchange.so.*
-%{tde_libdir}/libtdeabc_slox.so.*
-%{tde_libdir}/libtdeabc_xmlrpc.so.*
-%{tde_libdir}/libkcalkolab.so.*
-%{tde_libdir}/libkcalscalix.so.*
-%{tde_libdir}/libkcal_caldav.so.*
-%{tde_libdir}/libtdeabc_carddav.so.*
-%{tde_libdir}/libkcal_groupdav.so.*
-%{tde_libdir}/libkcal_groupwise.so.*
-%{tde_libdir}/libkcal_newexchange.so.*
-%{tde_libdir}/libkcal_resourcefeatureplan.so.*
-%{tde_libdir}/libkcal_slox.so.*
-%{tde_libdir}/libkcal_xmlrpc.so.*
-%{tde_libdir}/libkgroupwarebase.so.*
-%{tde_libdir}/libkgroupwaredav.so.*
-%{tde_libdir}/libknoteskolab.so.*
-%{tde_libdir}/libknotesscalix.so.*
-%{tde_libdir}/libknotes_xmlrpc.so.*
-%{tde_libdir}/libkslox.so.*
-%{tde_libdir}/libgwsoap.so.*
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_groupdav.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_groupwise.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_newexchange.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_opengroupware.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_ox.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_slox.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_xmlrpc.desktop
-%{tde_datadir}/services/tderesources/tdeabc/kolab.desktop
-%{tde_datadir}/services/tderesources/tdeabc/scalix.desktop
-%dir %{tde_datadir}/services/tderesources/kcal
-%{tde_datadir}/services/tderesources/kcal/exchange.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_caldav.desktop
-%{tde_datadir}/services/tderesources/tdeabc/tdeabc_carddav.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_groupdav.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_groupwise.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_newexchange.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_opengroupware.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_ox.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_resourcefeatureplan.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_slox.desktop
-%{tde_datadir}/services/tderesources/kcal/kcal_xmlrpc.desktop
-%{tde_datadir}/services/tderesources/kcal/kolab.desktop
-%{tde_datadir}/services/tderesources/kcal/scalix.desktop
-%dir %{tde_datadir}/services/tderesources/knotes
-%{tde_datadir}/services/tderesources/knotes/knotes_xmlrpc.desktop
-%{tde_datadir}/services/tderesources/knotes/kolabresource.desktop
-%{tde_datadir}/services/tderesources/knotes/scalix.desktop
+%{tde_prefix}/%{_lib}/trinity/kcal_caldav.la
+%{tde_prefix}/%{_lib}/trinity/kcal_caldav.so
+%{tde_prefix}/%{_lib}/trinity/kcal_groupdav.la
+%{tde_prefix}/%{_lib}/trinity/kcal_groupdav.so
+%{tde_prefix}/%{_lib}/trinity/kcal_groupwise.la
+%{tde_prefix}/%{_lib}/trinity/kcal_groupwise.so
+%{tde_prefix}/%{_lib}/trinity/kcal_kolab.la
+%{tde_prefix}/%{_lib}/trinity/kcal_kolab.so
+%{tde_prefix}/%{_lib}/trinity/kcal_scalix.la
+%{tde_prefix}/%{_lib}/trinity/kcal_scalix.so
+%{tde_prefix}/%{_lib}/trinity/kcal_newexchange.la
+%{tde_prefix}/%{_lib}/trinity/kcal_newexchange.so
+%{tde_prefix}/%{_lib}/trinity/kcal_resourcefeatureplan.la
+%{tde_prefix}/%{_lib}/trinity/kcal_resourcefeatureplan.so
+%{tde_prefix}/%{_lib}/trinity/kcal_slox.la
+%{tde_prefix}/%{_lib}/trinity/kcal_slox.so
+%{tde_prefix}/%{_lib}/trinity/kcal_xmlrpc.la
+%{tde_prefix}/%{_lib}/trinity/kcal_xmlrpc.so
+%{tde_prefix}/%{_lib}/trinity/knotes_kolab.la
+%{tde_prefix}/%{_lib}/trinity/knotes_kolab.so
+%{tde_prefix}/%{_lib}/trinity/knotes_scalix.la
+%{tde_prefix}/%{_lib}/trinity/knotes_scalix.so
+%{tde_prefix}/%{_lib}/trinity/knotes_xmlrpc.la
+%{tde_prefix}/%{_lib}/trinity/knotes_xmlrpc.so
+%{tde_prefix}/%{_lib}/libtdeabckolab.so.*
+%{tde_prefix}/%{_lib}/libtdeabcscalix.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_groupdav.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_groupwise.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_newexchange.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_slox.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_xmlrpc.so.*
+%{tde_prefix}/%{_lib}/libkcalkolab.so.*
+%{tde_prefix}/%{_lib}/libkcalscalix.so.*
+%{tde_prefix}/%{_lib}/libkcal_caldav.so.*
+%{tde_prefix}/%{_lib}/libtdeabc_carddav.so.*
+%{tde_prefix}/%{_lib}/libkcal_groupdav.so.*
+%{tde_prefix}/%{_lib}/libkcal_groupwise.so.*
+%{tde_prefix}/%{_lib}/libkcal_newexchange.so.*
+%{tde_prefix}/%{_lib}/libkcal_resourcefeatureplan.so.*
+%{tde_prefix}/%{_lib}/libkcal_slox.so.*
+%{tde_prefix}/%{_lib}/libkcal_xmlrpc.so.*
+%{tde_prefix}/%{_lib}/libkgroupwarebase.so.*
+%{tde_prefix}/%{_lib}/libkgroupwaredav.so.*
+%{tde_prefix}/%{_lib}/libknoteskolab.so.*
+%{tde_prefix}/%{_lib}/libknotesscalix.so.*
+%{tde_prefix}/%{_lib}/libknotes_xmlrpc.so.*
+%{tde_prefix}/%{_lib}/libkslox.so.*
+%{tde_prefix}/%{_lib}/libgwsoap.so.*
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_groupdav.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_groupwise.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_newexchange.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_opengroupware.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_ox.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_slox.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_xmlrpc.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/kolab.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/scalix.desktop
+%dir %{tde_prefix}/share/services/tderesources/kcal
+%{tde_prefix}/share/services/tderesources/kcal/exchange.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_caldav.desktop
+%{tde_prefix}/share/services/tderesources/tdeabc/tdeabc_carddav.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_groupdav.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_groupwise.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_newexchange.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_opengroupware.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_ox.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_resourcefeatureplan.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_slox.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kcal_xmlrpc.desktop
+%{tde_prefix}/share/services/tderesources/kcal/kolab.desktop
+%{tde_prefix}/share/services/tderesources/kcal/scalix.desktop
+%dir %{tde_prefix}/share/services/tderesources/knotes
+%{tde_prefix}/share/services/tderesources/knotes/knotes_xmlrpc.desktop
+%{tde_prefix}/share/services/tderesources/knotes/kolabresource.desktop
+%{tde_prefix}/share/services/tderesources/knotes/scalix.desktop
 
-%{tde_datadir}/apps/tdeconf_update/upgrade-resourcetype.pl
-%{tde_datadir}/apps/tdeconf_update/kolab-resource.upd
+%{tde_prefix}/share/apps/tdeconf_update/upgrade-resourcetype.pl
+%{tde_prefix}/share/apps/tdeconf_update/kolab-resource.upd
 
-%{tde_tdelibdir}/tdeabc_carddav.la
-%{tde_tdelibdir}/tdeabc_carddav.so
-%{tde_tdelibdir}/tdeabc_groupdav.la
-%{tde_tdelibdir}/tdeabc_groupdav.so
-%{tde_tdelibdir}/tdeabc_groupwise.la
-%{tde_tdelibdir}/tdeabc_groupwise.so
-%{tde_tdelibdir}/tdeabc_kolab.la
-%{tde_tdelibdir}/tdeabc_kolab.so
-%{tde_tdelibdir}/tdeabc_newexchange.la
-%{tde_tdelibdir}/tdeabc_newexchange.so
-%{tde_tdelibdir}/tdeabc_scalix.la
-%{tde_tdelibdir}/tdeabc_scalix.so
-%{tde_tdelibdir}/tdeabc_slox.la
-%{tde_tdelibdir}/tdeabc_slox.so
-%{tde_tdelibdir}/tdeabc_xmlrpc.la
-%{tde_tdelibdir}/tdeabc_xmlrpc.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_carddav.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_carddav.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_groupdav.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_groupdav.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_groupwise.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_groupwise.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_kolab.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_kolab.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_newexchange.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_newexchange.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_scalix.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_scalix.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_slox.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_slox.so
+%{tde_prefix}/%{_lib}/trinity/tdeabc_xmlrpc.la
+%{tde_prefix}/%{_lib}/trinity/tdeabc_xmlrpc.so
 
 ##########
 
@@ -666,55 +648,55 @@ Provides:	trinity-tdepim-kresources-devel = %{?epoch:%{epoch}:}%{version}-%{rele
 
 %files tderesources-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkslox.la
-%{tde_libdir}/libkslox.so
-%{tde_libdir}/libtdeabc_groupdav.la
-%{tde_libdir}/libtdeabc_groupdav.so
-%{tde_libdir}/libtdeabc_groupwise.la
-%{tde_libdir}/libtdeabc_groupwise.so
-%{tde_libdir}/libgwsoap.la
-%{tde_libdir}/libgwsoap.so
-%{tde_libdir}/libtdeabc_carddav.la
-%{tde_libdir}/libtdeabc_carddav.so
-%{tde_libdir}/libtdeabc_newexchange.la
-%{tde_libdir}/libtdeabc_newexchange.so
-%{tde_libdir}/libtdeabc_slox.la
-%{tde_libdir}/libtdeabc_slox.so
-%{tde_libdir}/libtdeabc_xmlrpc.la
-%{tde_libdir}/libtdeabc_xmlrpc.so
-%{tde_libdir}/libtdeabckolab.la
-%{tde_libdir}/libtdeabckolab.so
-%{tde_libdir}/libtdeabcscalix.la
-%{tde_libdir}/libtdeabcscalix.so
-%{tde_libdir}/libkcal_caldav.la
-%{tde_libdir}/libkcal_caldav.so
-%{tde_libdir}/libkcal_groupdav.la
-%{tde_libdir}/libkcal_groupdav.so
-%{tde_libdir}/libkcal_groupwise.la
-%{tde_libdir}/libkcal_groupwise.so
-%{tde_libdir}/libkcal_newexchange.la
-%{tde_libdir}/libkcal_newexchange.so
-%{tde_libdir}/libkcal_resourcefeatureplan.la
-%{tde_libdir}/libkcal_resourcefeatureplan.so
-%{tde_libdir}/libkcal_slox.la
-%{tde_libdir}/libkcal_slox.so
-%{tde_libdir}/libkcal_xmlrpc.la
-%{tde_libdir}/libkcal_xmlrpc.so
-%{tde_libdir}/libkcalkolab.la
-%{tde_libdir}/libkcalkolab.so
-%{tde_libdir}/libkcalscalix.la
-%{tde_libdir}/libkcalscalix.so
-%{tde_libdir}/libkgroupwarebase.la
-%{tde_libdir}/libkgroupwarebase.so
-%{tde_libdir}/libkgroupwaredav.la
-%{tde_libdir}/libkgroupwaredav.so
-%{tde_libdir}/libknotes_xmlrpc.la
-%{tde_libdir}/libknotes_xmlrpc.so
-%{tde_libdir}/libknoteskolab.la
-%{tde_libdir}/libknoteskolab.so
-%{tde_libdir}/libknotesscalix.la
-%{tde_libdir}/libknotesscalix.so
-%{tde_tdeincludedir}/kpimprefs.h
+%{tde_prefix}/%{_lib}/libkslox.la
+%{tde_prefix}/%{_lib}/libkslox.so
+%{tde_prefix}/%{_lib}/libtdeabc_groupdav.la
+%{tde_prefix}/%{_lib}/libtdeabc_groupdav.so
+%{tde_prefix}/%{_lib}/libtdeabc_groupwise.la
+%{tde_prefix}/%{_lib}/libtdeabc_groupwise.so
+%{tde_prefix}/%{_lib}/libgwsoap.la
+%{tde_prefix}/%{_lib}/libgwsoap.so
+%{tde_prefix}/%{_lib}/libtdeabc_carddav.la
+%{tde_prefix}/%{_lib}/libtdeabc_carddav.so
+%{tde_prefix}/%{_lib}/libtdeabc_newexchange.la
+%{tde_prefix}/%{_lib}/libtdeabc_newexchange.so
+%{tde_prefix}/%{_lib}/libtdeabc_slox.la
+%{tde_prefix}/%{_lib}/libtdeabc_slox.so
+%{tde_prefix}/%{_lib}/libtdeabc_xmlrpc.la
+%{tde_prefix}/%{_lib}/libtdeabc_xmlrpc.so
+%{tde_prefix}/%{_lib}/libtdeabckolab.la
+%{tde_prefix}/%{_lib}/libtdeabckolab.so
+%{tde_prefix}/%{_lib}/libtdeabcscalix.la
+%{tde_prefix}/%{_lib}/libtdeabcscalix.so
+%{tde_prefix}/%{_lib}/libkcal_caldav.la
+%{tde_prefix}/%{_lib}/libkcal_caldav.so
+%{tde_prefix}/%{_lib}/libkcal_groupdav.la
+%{tde_prefix}/%{_lib}/libkcal_groupdav.so
+%{tde_prefix}/%{_lib}/libkcal_groupwise.la
+%{tde_prefix}/%{_lib}/libkcal_groupwise.so
+%{tde_prefix}/%{_lib}/libkcal_newexchange.la
+%{tde_prefix}/%{_lib}/libkcal_newexchange.so
+%{tde_prefix}/%{_lib}/libkcal_resourcefeatureplan.la
+%{tde_prefix}/%{_lib}/libkcal_resourcefeatureplan.so
+%{tde_prefix}/%{_lib}/libkcal_slox.la
+%{tde_prefix}/%{_lib}/libkcal_slox.so
+%{tde_prefix}/%{_lib}/libkcal_xmlrpc.la
+%{tde_prefix}/%{_lib}/libkcal_xmlrpc.so
+%{tde_prefix}/%{_lib}/libkcalkolab.la
+%{tde_prefix}/%{_lib}/libkcalkolab.so
+%{tde_prefix}/%{_lib}/libkcalscalix.la
+%{tde_prefix}/%{_lib}/libkcalscalix.so
+%{tde_prefix}/%{_lib}/libkgroupwarebase.la
+%{tde_prefix}/%{_lib}/libkgroupwarebase.so
+%{tde_prefix}/%{_lib}/libkgroupwaredav.la
+%{tde_prefix}/%{_lib}/libkgroupwaredav.so
+%{tde_prefix}/%{_lib}/libknotes_xmlrpc.la
+%{tde_prefix}/%{_lib}/libknotes_xmlrpc.so
+%{tde_prefix}/%{_lib}/libknoteskolab.la
+%{tde_prefix}/%{_lib}/libknoteskolab.so
+%{tde_prefix}/%{_lib}/libknotesscalix.la
+%{tde_prefix}/%{_lib}/libknotesscalix.so
+%{tde_prefix}/include/tde/kpimprefs.h
 
 ##########
 
@@ -730,32 +712,32 @@ Kolab, and SUSE Linux Openexchange servers.
 
 %files wizards
 %defattr(-,root,root,-)
-%{tde_bindir}/egroupwarewizard
-%{tde_bindir}/exchangewizard
-%{tde_bindir}/groupwarewizard
-%{tde_bindir}/groupwisewizard
-%{tde_bindir}/kolabwizard
-%{tde_bindir}/scalixadmin
-%{tde_bindir}/scalixwizard
-%{tde_bindir}/sloxwizard
-%{tde_tdelibdir}/libegroupwarewizard.la
-%{tde_tdelibdir}/libegroupwarewizard.so
-%{tde_tdelibdir}/libexchangewizard.la
-%{tde_tdelibdir}/libexchangewizard.so
-%{tde_tdelibdir}/libgroupwisewizard.la
-%{tde_tdelibdir}/libgroupwisewizard.so
-%{tde_tdelibdir}/libkolabwizard.la
-%{tde_tdelibdir}/libkolabwizard.so
-%{tde_tdelibdir}/libscalixwizard.la
-%{tde_tdelibdir}/libscalixwizard.so
-%{tde_tdelibdir}/libsloxwizard.la
-%{tde_tdelibdir}/libsloxwizard.so
-%{tde_tdeappdir}/groupwarewizard.desktop
-%{tde_datadir}/config.kcfg/egroupware.kcfg
-%{tde_datadir}/config.kcfg/groupwise.kcfg
-%{tde_datadir}/config.kcfg/kolab.kcfg
-%{tde_datadir}/config.kcfg/scalix.kcfg
-%{tde_datadir}/config.kcfg/slox.kcfg
+%{tde_prefix}/bin/egroupwarewizard
+%{tde_prefix}/bin/exchangewizard
+%{tde_prefix}/bin/groupwarewizard
+%{tde_prefix}/bin/groupwisewizard
+%{tde_prefix}/bin/kolabwizard
+%{tde_prefix}/bin/scalixadmin
+%{tde_prefix}/bin/scalixwizard
+%{tde_prefix}/bin/sloxwizard
+%{tde_prefix}/%{_lib}/trinity/libegroupwarewizard.la
+%{tde_prefix}/%{_lib}/trinity/libegroupwarewizard.so
+%{tde_prefix}/%{_lib}/trinity/libexchangewizard.la
+%{tde_prefix}/%{_lib}/trinity/libexchangewizard.so
+%{tde_prefix}/%{_lib}/trinity/libgroupwisewizard.la
+%{tde_prefix}/%{_lib}/trinity/libgroupwisewizard.so
+%{tde_prefix}/%{_lib}/trinity/libkolabwizard.la
+%{tde_prefix}/%{_lib}/trinity/libkolabwizard.so
+%{tde_prefix}/%{_lib}/trinity/libscalixwizard.la
+%{tde_prefix}/%{_lib}/trinity/libscalixwizard.so
+%{tde_prefix}/%{_lib}/trinity/libsloxwizard.la
+%{tde_prefix}/%{_lib}/trinity/libsloxwizard.so
+%{tde_prefix}/share/applications/tde/groupwarewizard.desktop
+%{tde_prefix}/share/config.kcfg/egroupware.kcfg
+%{tde_prefix}/share/config.kcfg/groupwise.kcfg
+%{tde_prefix}/share/config.kcfg/kolab.kcfg
+%{tde_prefix}/share/config.kcfg/scalix.kcfg
+%{tde_prefix}/share/config.kcfg/slox.kcfg
 
 ##########
 
@@ -773,14 +755,14 @@ development (?).  Kitchensync uses opensync.
 
 %files -n trinity-kitchensync
 %defattr(-,root,root,-)
-%{tde_bindir}/kitchensync
-%{tde_tdelibdir}/libkitchensyncpart.la
-%{tde_tdelibdir}/libkitchensyncpart.so
-%{tde_datadir}/apps/kitchensync
-%{tde_libdir}/libkitchensync.so.*
-%{tde_libdir}/libqopensync.so.*
-%{tde_tdeappdir}/kitchensync.desktop
-%{tde_datadir}/icons/hicolor/*/apps/kitchensync.png
+%{tde_prefix}/bin/kitchensync
+%{tde_prefix}/%{_lib}/trinity/libkitchensyncpart.la
+%{tde_prefix}/%{_lib}/trinity/libkitchensyncpart.so
+%{tde_prefix}/share/apps/kitchensync
+%{tde_prefix}/%{_lib}/libkitchensync.so.*
+%{tde_prefix}/%{_lib}/libqopensync.so.*
+%{tde_prefix}/share/applications/tde/kitchensync.desktop
+%{tde_prefix}/share/icons/hicolor/*/apps/kitchensync.png
 %endif
 
 ##########
@@ -799,19 +781,19 @@ keybox and for retrieving certificates from LDAP servers.
 
 %files -n trinity-kleopatra
 %defattr(-,root,root,-)
-%{tde_bindir}/kleopatra
-%{tde_bindir}/kwatchgnupg
-%{tde_tdelibdir}/kcm_kleopatra.la
-%{tde_tdelibdir}/kcm_kleopatra.so
-%{tde_tdeappdir}/kleopatra_import.desktop
-%{tde_datadir}/apps/kleopatra
-%{tde_datadir}/apps/kwatchgnupg
-%{tde_datadir}/services/kleopatra_config_*.desktop
-%{tde_tdeappdir}/kleopatra.desktop
-%{tde_tdedocdir}/HTML/en/kleopatra/
-%{tde_tdedocdir}/HTML/en/kwatchgnupg/
-%{tde_datadir}/icons/hicolor/*/apps/kleopatra.png
-%{tde_datadir}/icons/hicolor/scalable/apps/kleopatra.svgz
+%{tde_prefix}/bin/kleopatra
+%{tde_prefix}/bin/kwatchgnupg
+%{tde_prefix}/%{_lib}/trinity/kcm_kleopatra.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kleopatra.so
+%{tde_prefix}/share/applications/tde/kleopatra_import.desktop
+%{tde_prefix}/share/apps/kleopatra
+%{tde_prefix}/share/apps/kwatchgnupg
+%{tde_prefix}/share/services/kleopatra_config_*.desktop
+%{tde_prefix}/share/applications/tde/kleopatra.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kleopatra/
+%{tde_prefix}/share/doc/tde/HTML/en/kwatchgnupg/
+%{tde_prefix}/share/icons/hicolor/*/apps/kleopatra.png
+%{tde_prefix}/share/icons/hicolor/scalable/apps/kleopatra.svgz
 
 ##########
 
@@ -853,62 +835,62 @@ mbox files, and/or trinity-tdebase-tdeio-plugins if you want to use POP3.
 
 %files -n trinity-kmail
 %defattr(-,root,root,-)
-%config(noreplace) %{tde_confdir}/kmail.antispamrc
-%config(noreplace) %{tde_confdir}/kmail.antivirusrc
-%{tde_bindir}/kmail
-%{tde_bindir}/kmail_*.sh
-%{tde_tdelibdir}/kcm_kmail.la
-%{tde_tdelibdir}/kcm_kmail.so
-%{tde_tdelibdir}/libkmail_bodypartformatter_application_octetstream.la
-%{tde_tdelibdir}/libkmail_bodypartformatter_application_octetstream.so
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_calendar.la
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_calendar.so
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_vcard.la
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_vcard.so
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_xdiff.la
-%{tde_tdelibdir}/libkmail_bodypartformatter_text_xdiff.so
-%{tde_tdelibdir}/libkmailpart.la
-%{tde_tdelibdir}/libkmailpart.so
-%{tde_tdeappdir}/KMail.desktop
-%{tde_tdeappdir}/kmail_view.desktop
-%{tde_datadir}/apps/tdeconf_update/kmail-3.1-update-new-mail-notification-settings.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.1-use-UOID-for-identities.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.1.4-dont-use-UOID-0-for-any-identity.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.2-misc.sh
-%{tde_datadir}/apps/tdeconf_update/kmail-3.2-update-loop-on-goto-unread-settings.sh
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3-aegypten.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3-misc.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3-move-identities.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3-split-sign-encr-keys.sh
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3-use-ID-for-accounts.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.3b1-misc.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.4-misc.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.4.1-update-status-filters.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.5-trigger-flag-migration.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-3.5-filter-icons.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-pgpidentity.pl
-%{tde_datadir}/apps/tdeconf_update/kmail-upd-identities.pl
-%{tde_datadir}/apps/tdeconf_update/kmail.upd
-%{tde_datadir}/apps/tdeconf_update/upgrade-signature.pl
-%{tde_datadir}/apps/tdeconf_update/upgrade-transport.pl
-%{tde_datadir}/apps/kmail
-%{tde_datadir}/apps/konqueror/servicemenus/email.desktop
-%{tde_datadir}/config.kcfg/custommimeheader.kcfg
-%{tde_datadir}/config.kcfg/kmail.kcfg
-%{tde_datadir}/config.kcfg/customtemplates_kfg.kcfg
-%{tde_datadir}/config.kcfg/replyphrases.kcfg
-%{tde_datadir}/config.kcfg/templatesconfiguration_kfg.kcfg
-%{tde_datadir}/icons/crystalsvg/*/apps/kmaillight.png
-%{tde_datadir}/icons/hicolor/*/apps/kmail.png
-%{tde_datadir}/icons/hicolor/scalable/apps/kmail.svgz
-%{tde_datadir}/services/kmail_config_*.desktop
-%{tde_datadir}/services/kontact/kmailplugin.desktop
-%{tde_datadir}/servicetypes/dcopimap.desktop
-%{tde_datadir}/servicetypes/dcopmail.desktop
+%config(noreplace) %{_sysconfdir}/trinity/kmail.antispamrc
+%config(noreplace) %{_sysconfdir}/trinity/kmail.antivirusrc
+%{tde_prefix}/bin/kmail
+%{tde_prefix}/bin/kmail_*.sh
+%{tde_prefix}/%{_lib}/trinity/kcm_kmail.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kmail.so
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_application_octetstream.la
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_application_octetstream.so
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_calendar.la
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_calendar.so
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_vcard.la
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_vcard.so
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_xdiff.la
+%{tde_prefix}/%{_lib}/trinity/libkmail_bodypartformatter_text_xdiff.so
+%{tde_prefix}/%{_lib}/trinity/libkmailpart.la
+%{tde_prefix}/%{_lib}/trinity/libkmailpart.so
+%{tde_prefix}/share/applications/tde/KMail.desktop
+%{tde_prefix}/share/applications/tde/kmail_view.desktop
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.1-update-new-mail-notification-settings.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.1-use-UOID-for-identities.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.1.4-dont-use-UOID-0-for-any-identity.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.2-misc.sh
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.2-update-loop-on-goto-unread-settings.sh
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3-aegypten.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3-misc.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3-move-identities.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3-split-sign-encr-keys.sh
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3-use-ID-for-accounts.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.3b1-misc.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.4-misc.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.4.1-update-status-filters.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.5-trigger-flag-migration.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-3.5-filter-icons.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-pgpidentity.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail-upd-identities.pl
+%{tde_prefix}/share/apps/tdeconf_update/kmail.upd
+%{tde_prefix}/share/apps/tdeconf_update/upgrade-signature.pl
+%{tde_prefix}/share/apps/tdeconf_update/upgrade-transport.pl
+%{tde_prefix}/share/apps/kmail
+%{tde_prefix}/share/apps/konqueror/servicemenus/email.desktop
+%{tde_prefix}/share/config.kcfg/custommimeheader.kcfg
+%{tde_prefix}/share/config.kcfg/kmail.kcfg
+%{tde_prefix}/share/config.kcfg/customtemplates_kfg.kcfg
+%{tde_prefix}/share/config.kcfg/replyphrases.kcfg
+%{tde_prefix}/share/config.kcfg/templatesconfiguration_kfg.kcfg
+%{tde_prefix}/share/icons/crystalsvg/*/apps/kmaillight.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kmail.png
+%{tde_prefix}/share/icons/hicolor/scalable/apps/kmail.svgz
+%{tde_prefix}/share/services/kmail_config_*.desktop
+%{tde_prefix}/share/services/kontact/kmailplugin.desktop
+%{tde_prefix}/share/servicetypes/dcopimap.desktop
+%{tde_prefix}/share/servicetypes/dcopmail.desktop
 # 'libkmailprivate.so' is required at runtime, not devel !
-%{tde_libdir}/libkmailprivate.so
-%{tde_libdir}/libkmailprivate.la
-%{tde_tdedocdir}/HTML/en/kmail/
+%{tde_prefix}/%{_lib}/libkmailprivate.so
+%{tde_prefix}/%{_lib}/libkmailprivate.la
+%{tde_prefix}/share/doc/tde/HTML/en/kmail/
 
 ##########
 
@@ -922,8 +904,8 @@ Group:		Development/Libraries/Other
 %files -n trinity-kmail-devel
 %defattr(-,root,root,-)
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/kmail/
-%{tde_tdeincludedir}/kmail*.h
+%{tde_prefix}/include/tde/kmail/
+%{tde_prefix}/include/tde/kmail*.h
 
 ##########
  
@@ -938,10 +920,10 @@ include Outlook Express, Evolution, and plain mbox.
 
 %files -n trinity-kmailcvt
 %defattr(-,root,root,-)
-%{tde_bindir}/kmailcvt
-%{tde_datadir}/applnk/Utilities/kmailcvt.desktop
-%{tde_datadir}/apps/kmailcvt
-%{tde_datadir}/icons/crystalsvg/*/apps/kmailcvt.png
+%{tde_prefix}/bin/kmailcvt
+%{tde_prefix}/share/applnk/Utilities/kmailcvt.desktop
+%{tde_prefix}/share/apps/kmailcvt
+%{tde_prefix}/share/icons/crystalsvg/*/apps/kmailcvt.png
 
 ##########
 
@@ -957,20 +939,20 @@ signatures.
 
 %files -n trinity-knode
 %defattr(-,root,root,-)
-%{tde_bindir}/knode
-%{tde_tdelibdir}/kcm_knode.la
-%{tde_tdelibdir}/kcm_knode.so
-%{tde_tdelibdir}/libknodepart.la
-%{tde_tdelibdir}/libknodepart.so
-%{tde_libdir}/libknodecommon.so.*
-%{tde_tdeappdir}/KNode.desktop
-%{tde_datadir}/apps/knode/
-%{tde_datadir}/icons/hicolor/*/apps/knode.png
-%{tde_datadir}/icons/hicolor/*/apps/knode2.png
-%{tde_datadir}/services/knewsservice.protocol
-%{tde_datadir}/services/knode_config_*.desktop
-%{tde_datadir}/services/kontact/knodeplugin.desktop
-%{tde_tdedocdir}/HTML/en/knode/
+%{tde_prefix}/bin/knode
+%{tde_prefix}/%{_lib}/trinity/kcm_knode.la
+%{tde_prefix}/%{_lib}/trinity/kcm_knode.so
+%{tde_prefix}/%{_lib}/trinity/libknodepart.la
+%{tde_prefix}/%{_lib}/trinity/libknodepart.so
+%{tde_prefix}/%{_lib}/libknodecommon.so.*
+%{tde_prefix}/share/applications/tde/KNode.desktop
+%{tde_prefix}/share/apps/knode/
+%{tde_prefix}/share/icons/hicolor/*/apps/knode.png
+%{tde_prefix}/share/icons/hicolor/*/apps/knode2.png
+%{tde_prefix}/share/services/knewsservice.protocol
+%{tde_prefix}/share/services/knode_config_*.desktop
+%{tde_prefix}/share/services/kontact/knodeplugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/knode/
 
 ##########
 
@@ -984,8 +966,8 @@ Requires:	trinity-knode = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-knode-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libknodecommon.la
-%{tde_libdir}/libknodecommon.so
+%{tde_prefix}/%{_lib}/libknodecommon.la
+%{tde_prefix}/%{_lib}/libknodecommon.so
 
 ##########
 
@@ -1001,20 +983,20 @@ program.  The program supports printing and mailing your notes.
 
 %files -n trinity-knotes
 %defattr(-,root,root,-)
-%{tde_bindir}/knotes
-%{tde_tdelibdir}/knotes_local.la
-%{tde_tdelibdir}/knotes_local.so
-%{tde_libdir}/libknotes.so.*
-%{tde_tdeappdir}/knotes.desktop
-%{tde_datadir}/apps/knotes/
-%{tde_datadir}/config.kcfg/knoteconfig.kcfg
-%{tde_datadir}/config.kcfg/knotesglobalconfig.kcfg
-%{tde_datadir}/icons/hicolor/*/apps/knotes.png
-%{tde_datadir}/services/tderesources/knotes/imap.desktop
-%{tde_datadir}/services/tderesources/knotes/local.desktop
-%{tde_datadir}/services/tderesources/knotes_manager.desktop
-%{tde_datadir}/services/kontact/knotesplugin.desktop
-%{tde_tdedocdir}/HTML/en/knotes/
+%{tde_prefix}/bin/knotes
+%{tde_prefix}/%{_lib}/trinity/knotes_local.la
+%{tde_prefix}/%{_lib}/trinity/knotes_local.so
+%{tde_prefix}/%{_lib}/libknotes.so.*
+%{tde_prefix}/share/applications/tde/knotes.desktop
+%{tde_prefix}/share/apps/knotes/
+%{tde_prefix}/share/config.kcfg/knoteconfig.kcfg
+%{tde_prefix}/share/config.kcfg/knotesglobalconfig.kcfg
+%{tde_prefix}/share/icons/hicolor/*/apps/knotes.png
+%{tde_prefix}/share/services/tderesources/knotes/imap.desktop
+%{tde_prefix}/share/services/tderesources/knotes/local.desktop
+%{tde_prefix}/share/services/tderesources/knotes_manager.desktop
+%{tde_prefix}/share/services/kontact/knotesplugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/knotes/
 
 ##########
 
@@ -1029,10 +1011,10 @@ Requires:	%{name}-tderesources-devel = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-knotes-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libknotes.so
-%{tde_libdir}/libknotes.la
-%{tde_tdeincludedir}/KNotesAppIface.h
-%{tde_tdeincludedir}/KNotesIface.h
+%{tde_prefix}/%{_lib}/libknotes.so
+%{tde_prefix}/%{_lib}/libknotes.la
+%{tde_prefix}/include/tde/KNotesAppIface.h
+%{tde_prefix}/include/tde/KNotesIface.h
 
 ##########
 
@@ -1047,9 +1029,9 @@ described by RelaxNG schemes.
 
 %files -n trinity-kode
 %defattr(-,root,root,-)
-%{tde_bindir}/kode
-%{tde_bindir}/kxml_compiler
-%{tde_libdir}/libkode.so.*
+%{tde_prefix}/bin/kode
+%{tde_prefix}/bin/kxml_compiler
+%{tde_prefix}/%{_lib}/libkode.so.*
 
 ##########
 
@@ -1063,8 +1045,8 @@ Requires:	trinity-kode = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-kode-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkode.la
-%{tde_libdir}/libkode.so
+%{tde_prefix}/%{_lib}/libkode.la
+%{tde_prefix}/%{_lib}/libkode.so
 
 ##########
 
@@ -1079,10 +1061,10 @@ frontend to manage your calendars.
 
 %files -n trinity-konsolekalendar
 %defattr(-,root,root,-)
-%{tde_bindir}/konsolekalendar
-%{tde_tdeappdir}/konsolekalendar.desktop
-%{tde_datadir}/icons/crystalsvg/*/apps/konsolekalendar.png
-%{tde_tdedocdir}/HTML/en/konsolekalendar/
+%{tde_prefix}/bin/konsolekalendar
+%{tde_prefix}/share/applications/tde/konsolekalendar.desktop
+%{tde_prefix}/share/icons/crystalsvg/*/apps/konsolekalendar.png
+%{tde_prefix}/share/doc/tde/HTML/en/konsolekalendar/
 
 ##########
 
@@ -1104,43 +1086,43 @@ scheduling, address book and other PIM functionality.
 
 %files -n trinity-kontact
 %defattr(-,root,root,-)
-%{tde_bindir}/kontact
-%{tde_tdelibdir}/kcm_kmailsummary.la
-%{tde_tdelibdir}/kcm_kmailsummary.so
-%{tde_tdelibdir}/kcm_kontact.la
-%{tde_tdelibdir}/kcm_kontact.so
-%{tde_tdelibdir}/kcm_kontactknt.la
-%{tde_tdelibdir}/kcm_kontactknt.so
-%{tde_tdelibdir}/kcm_kontactsummary.la
-%{tde_tdelibdir}/kcm_kontactsummary.so
-%{tde_tdelibdir}/kcm_korgsummary.la
-%{tde_tdelibdir}/kcm_korgsummary.so
-%{tde_tdelibdir}/kcm_sdsummary.la
-%{tde_tdelibdir}/kcm_sdsummary.so
-%{tde_tdelibdir}/libkontact_*.la
-%{tde_tdelibdir}/libkontact_*.so
-%{tde_libdir}/libkontact.so.*
-%{tde_libdir}/libkpinterfaces.so.*
-%{tde_tdeappdir}/Kontact.desktop
-%{tde_tdeappdir}/kontactdcop.desktop
-%{tde_datadir}/apps/kontact/
-%{tde_datadir}/apps/kontactsummary/
-%{tde_datadir}/config.kcfg/kontact.kcfg
-%{tde_datadir}/icons/hicolor/*/apps/kontact.png
-%{tde_datadir}/icons/crystalsvg/*/actions/kontact_*.png
-%{tde_datadir}/services/kcmkmailsummary.desktop
-%{tde_datadir}/services/kcmkontactknt.desktop
-%{tde_datadir}/services/kcmkontactsummary.desktop
-%{tde_datadir}/services/kcmkorgsummary.desktop
-%{tde_datadir}/services/kcmsdsummary.desktop
-%dir %{tde_datadir}/services/kontact
-%{tde_datadir}/services/kontact/newstickerplugin.desktop
-%{tde_datadir}/services/kontact/specialdatesplugin.desktop
-%{tde_datadir}/services/kontact/summaryplugin.desktop
-%{tde_datadir}/services/kontact/weatherplugin.desktop
-%{tde_datadir}/services/kontactconfig.desktop
-%{tde_datadir}/servicetypes/kontactplugin.desktop
-%{tde_tdedocdir}/HTML/en/kontact/
+%{tde_prefix}/bin/kontact
+%{tde_prefix}/%{_lib}/trinity/kcm_kmailsummary.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kmailsummary.so
+%{tde_prefix}/%{_lib}/trinity/kcm_kontact.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kontact.so
+%{tde_prefix}/%{_lib}/trinity/kcm_kontactknt.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kontactknt.so
+%{tde_prefix}/%{_lib}/trinity/kcm_kontactsummary.la
+%{tde_prefix}/%{_lib}/trinity/kcm_kontactsummary.so
+%{tde_prefix}/%{_lib}/trinity/kcm_korgsummary.la
+%{tde_prefix}/%{_lib}/trinity/kcm_korgsummary.so
+%{tde_prefix}/%{_lib}/trinity/kcm_sdsummary.la
+%{tde_prefix}/%{_lib}/trinity/kcm_sdsummary.so
+%{tde_prefix}/%{_lib}/trinity/libkontact_*.la
+%{tde_prefix}/%{_lib}/trinity/libkontact_*.so
+%{tde_prefix}/%{_lib}/libkontact.so.*
+%{tde_prefix}/%{_lib}/libkpinterfaces.so.*
+%{tde_prefix}/share/applications/tde/Kontact.desktop
+%{tde_prefix}/share/applications/tde/kontactdcop.desktop
+%{tde_prefix}/share/apps/kontact/
+%{tde_prefix}/share/apps/kontactsummary/
+%{tde_prefix}/share/config.kcfg/kontact.kcfg
+%{tde_prefix}/share/icons/hicolor/*/apps/kontact.png
+%{tde_prefix}/share/icons/crystalsvg/*/actions/kontact_*.png
+%{tde_prefix}/share/services/kcmkmailsummary.desktop
+%{tde_prefix}/share/services/kcmkontactknt.desktop
+%{tde_prefix}/share/services/kcmkontactsummary.desktop
+%{tde_prefix}/share/services/kcmkorgsummary.desktop
+%{tde_prefix}/share/services/kcmsdsummary.desktop
+%dir %{tde_prefix}/share/services/kontact
+%{tde_prefix}/share/services/kontact/newstickerplugin.desktop
+%{tde_prefix}/share/services/kontact/specialdatesplugin.desktop
+%{tde_prefix}/share/services/kontact/summaryplugin.desktop
+%{tde_prefix}/share/services/kontact/weatherplugin.desktop
+%{tde_prefix}/share/services/kontactconfig.desktop
+%{tde_prefix}/share/servicetypes/kontactplugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/kontact/
 
 ##########
 
@@ -1154,11 +1136,11 @@ Requires:	trinity-kontact = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-kontact-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkontact.la
-%{tde_libdir}/libkontact.so
-%{tde_libdir}/libkpinterfaces.la
-%{tde_libdir}/libkpinterfaces.so
-%{tde_tdeincludedir}/kontact/
+%{tde_prefix}/%{_lib}/libkontact.la
+%{tde_prefix}/%{_lib}/libkontact.so
+%{tde_prefix}/%{_lib}/libkpinterfaces.la
+%{tde_prefix}/%{_lib}/libkpinterfaces.so
+%{tde_prefix}/include/tde/kontact/
 
 ##########
 
@@ -1194,41 +1176,41 @@ installed.
 
 %files -n trinity-korganizer
 %defattr(-,root,root,-)
-%{tde_bindir}/ical2vcal
-%{tde_bindir}/korgac
-%{tde_bindir}/korganizer
-%{tde_tdelibdir}/kcm_korganizer.la
-%{tde_tdelibdir}/kcm_korganizer.so
-%{tde_tdelibdir}/libkorg_*.la
-%{tde_tdelibdir}/libkorg_*.so
-%{tde_tdelibdir}/libkorganizerpart.la
-%{tde_tdelibdir}/libkorganizerpart.so
-%{tde_libdir}/libkocorehelper.so.*
-%{tde_libdir}/libkorg_stdprinting.so.*
-%{tde_libdir}/libkorganizer.so.*
-%{tde_libdir}/libkorganizer_calendar.so.*
-%{tde_libdir}/libkorganizer_eventviewer.so.*
-%{tde_tdeappdir}/korganizer.desktop
-%{tde_datadir}/apps/tdeconf_update/korganizer.upd
-%{tde_datadir}/apps/korgac/
-%{tde_datadir}/apps/korganizer/
-%{tde_datadir}/autostart/korgac.desktop
-%{tde_datadir}/config.kcfg/korganizer.kcfg
-%{tde_datadir}/icons/hicolor/*/apps/korganizer.png
-%dir %{tde_datadir}/services/kontact
-%{tde_datadir}/services/kontact/korganizerplugin.desktop
-%{tde_datadir}/services/kontact/journalplugin.desktop
-%{tde_datadir}/services/kontact/todoplugin.desktop
-%{tde_datadir}/services/korganizer_*.desktop
-%{tde_datadir}/services/korganizer
-%{tde_datadir}/services/webcal.protocol
-%{tde_datadir}/servicetypes/calendardecoration.desktop
-%{tde_datadir}/servicetypes/calendarplugin.desktop
-%{tde_datadir}/servicetypes/dcopcalendar.desktop
-%{tde_datadir}/servicetypes/korganizerpart.desktop
-%{tde_datadir}/servicetypes/korgprintplugin.desktop
-%{tde_tdedocdir}/HTML/en/korganizer/
-%{tde_tdedocdir}/HTML/en/tdeioslave/webcal/
+%{tde_prefix}/bin/ical2vcal
+%{tde_prefix}/bin/korgac
+%{tde_prefix}/bin/korganizer
+%{tde_prefix}/%{_lib}/trinity/kcm_korganizer.la
+%{tde_prefix}/%{_lib}/trinity/kcm_korganizer.so
+%{tde_prefix}/%{_lib}/trinity/libkorg_*.la
+%{tde_prefix}/%{_lib}/trinity/libkorg_*.so
+%{tde_prefix}/%{_lib}/trinity/libkorganizerpart.la
+%{tde_prefix}/%{_lib}/trinity/libkorganizerpart.so
+%{tde_prefix}/%{_lib}/libkocorehelper.so.*
+%{tde_prefix}/%{_lib}/libkorg_stdprinting.so.*
+%{tde_prefix}/%{_lib}/libkorganizer.so.*
+%{tde_prefix}/%{_lib}/libkorganizer_calendar.so.*
+%{tde_prefix}/%{_lib}/libkorganizer_eventviewer.so.*
+%{tde_prefix}/share/applications/tde/korganizer.desktop
+%{tde_prefix}/share/apps/tdeconf_update/korganizer.upd
+%{tde_prefix}/share/apps/korgac/
+%{tde_prefix}/share/apps/korganizer/
+%{tde_prefix}/share/autostart/korgac.desktop
+%{tde_prefix}/share/config.kcfg/korganizer.kcfg
+%{tde_prefix}/share/icons/hicolor/*/apps/korganizer.png
+%dir %{tde_prefix}/share/services/kontact
+%{tde_prefix}/share/services/kontact/korganizerplugin.desktop
+%{tde_prefix}/share/services/kontact/journalplugin.desktop
+%{tde_prefix}/share/services/kontact/todoplugin.desktop
+%{tde_prefix}/share/services/korganizer_*.desktop
+%{tde_prefix}/share/services/korganizer
+%{tde_prefix}/share/services/webcal.protocol
+%{tde_prefix}/share/servicetypes/calendardecoration.desktop
+%{tde_prefix}/share/servicetypes/calendarplugin.desktop
+%{tde_prefix}/share/servicetypes/dcopcalendar.desktop
+%{tde_prefix}/share/servicetypes/korganizerpart.desktop
+%{tde_prefix}/share/servicetypes/korgprintplugin.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/korganizer/
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/webcal/
 
 ##########
 
@@ -1242,18 +1224,18 @@ Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-korganizer-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/korganizer/
-%{tde_tdeincludedir}/calendar/
-%{tde_libdir}/libkocorehelper.la
-%{tde_libdir}/libkocorehelper.so
-%{tde_libdir}/libkorg_stdprinting.la
-%{tde_libdir}/libkorg_stdprinting.so
-%{tde_libdir}/libkorganizer.la
-%{tde_libdir}/libkorganizer.so
-%{tde_libdir}/libkorganizer_calendar.la
-%{tde_libdir}/libkorganizer_calendar.so
-%{tde_libdir}/libkorganizer_eventviewer.la
-%{tde_libdir}/libkorganizer_eventviewer.so
+%{tde_prefix}/include/tde/korganizer/
+%{tde_prefix}/include/tde/calendar/
+%{tde_prefix}/%{_lib}/libkocorehelper.la
+%{tde_prefix}/%{_lib}/libkocorehelper.so
+%{tde_prefix}/%{_lib}/libkorg_stdprinting.la
+%{tde_prefix}/%{_lib}/libkorg_stdprinting.so
+%{tde_prefix}/%{_lib}/libkorganizer.la
+%{tde_prefix}/%{_lib}/libkorganizer.so
+%{tde_prefix}/%{_lib}/libkorganizer_calendar.la
+%{tde_prefix}/%{_lib}/libkorganizer_calendar.so
+%{tde_prefix}/%{_lib}/libkorganizer_eventviewer.la
+%{tde_prefix}/%{_lib}/libkorganizer_eventviewer.so
 
 ##########
 
@@ -1281,15 +1263,15 @@ Korn run a program once you click on the docked icon in Kicker.
 
 %files -n trinity-korn
 %defattr(-,root,root,-)
-%{tde_bindir}/korn
-%{tde_libdir}/tdeconf_update_bin/korn-3-4-config_change
-%{tde_tdeappdir}/KOrn.desktop
-%{tde_datadir}/apps/tdeconf_update/korn-3-4-config_change.upd
-%{tde_datadir}/apps/tdeconf_update/korn-3-5-metadata-update.pl
-%{tde_datadir}/apps/tdeconf_update/korn-3-5-ssl-update.pl
-%{tde_datadir}/apps/tdeconf_update/korn-3-5-update.upd
-%{tde_datadir}/icons/hicolor/*/apps/korn.png
-%{tde_tdedocdir}/HTML/en/korn/
+%{tde_prefix}/bin/korn
+%{tde_prefix}/%{_lib}/tdeconf_update_bin/korn-3-4-config_change
+%{tde_prefix}/share/applications/tde/KOrn.desktop
+%{tde_prefix}/share/apps/tdeconf_update/korn-3-4-config_change.upd
+%{tde_prefix}/share/apps/tdeconf_update/korn-3-5-metadata-update.pl
+%{tde_prefix}/share/apps/tdeconf_update/korn-3-5-ssl-update.pl
+%{tde_prefix}/share/apps/tdeconf_update/korn-3-5-update.upd
+%{tde_prefix}/share/icons/hicolor/*/apps/korn.png
+%{tde_prefix}/share/doc/tde/HTML/en/korn/
 
 ##########
 
@@ -1304,13 +1286,13 @@ mail servers and embed the mail properties as well as the actual attachments.
 
 %files -n trinity-ktnef
 %defattr(-,root,root,-)
-%{tde_bindir}/ktnef
-%{tde_tdeappdir}/ktnef.desktop
-%{tde_datadir}/apps/ktnef
-%{tde_datadir}/icons/hicolor/*/apps/ktnef.png
-%{tde_datadir}/icons/locolor/*/apps/ktnef.png
-%{tde_datadir}/mimelnk/application/ms-tnef.desktop
-%{tde_tdedocdir}/HTML/en/ktnef/
+%{tde_prefix}/bin/ktnef
+%{tde_prefix}/share/applications/tde/ktnef.desktop
+%{tde_prefix}/share/apps/ktnef
+%{tde_prefix}/share/icons/hicolor/*/apps/ktnef.png
+%{tde_prefix}/share/icons/locolor/*/apps/ktnef.png
+%{tde_prefix}/share/mimelnk/application/ms-tnef.desktop
+%{tde_prefix}/share/doc/tde/HTML/en/ktnef/
 
 ##########
 
@@ -1326,7 +1308,7 @@ This is the runtime package for programs that use the libindex library.
 
 %files -n trinity-libindex
 %defattr(-,root,root,-)
-%{tde_libdir}/libindex.so.*
+%{tde_prefix}/%{_lib}/libindex.so.*
 
 ##########
 
@@ -1344,10 +1326,10 @@ library.
 
 %files -n trinity-libindex-devel
 %defattr(-,root,root,-)
-%{tde_bindir}/indexlib-config
-%{tde_tdeincludedir}/index
-%{tde_libdir}/libindex.la
-%{tde_libdir}/libindex.so
+%{tde_prefix}/bin/indexlib-config
+%{tde_prefix}/include/tde/index
+%{tde_prefix}/%{_lib}/libindex.la
+%{tde_prefix}/%{_lib}/libindex.so
 
 ##########
 
@@ -1365,25 +1347,25 @@ This is the runtime package for programs that use the libkcal-trinity library.
 
 %files -n trinity-libkcal
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/kcal_tdeabc.la
-%{tde_tdelibdir}/kcal_tdeabc.so
-%{tde_tdelibdir}/kcal_localdir.la
-%{tde_tdelibdir}/kcal_localdir.so
-%{tde_tdelibdir}/kcal_local.la
-%{tde_tdelibdir}/kcal_local.so
-%{tde_tdelibdir}/kcal_remote.la
-%{tde_tdelibdir}/kcal_remote.so
-%{tde_libdir}/libkcal.so.*
-%{tde_libdir}/libkcal_resourceremote.so.*
-%{tde_libdir}/libkholidays.so.*
-%{tde_datadir}/apps/libkholidays/
-%dir %{tde_datadir}/services/tderesources/kcal
-%{tde_datadir}/services/tderesources/kcal/imap.desktop
-%{tde_datadir}/services/tderesources/kcal/tdeabc.desktop
-%{tde_datadir}/services/tderesources/kcal/local.desktop
-%{tde_datadir}/services/tderesources/kcal/localdir.desktop
-%{tde_datadir}/services/tderesources/kcal/remote.desktop
-%{tde_datadir}/services/tderesources/kcal_manager.desktop
+%{tde_prefix}/%{_lib}/trinity/kcal_tdeabc.la
+%{tde_prefix}/%{_lib}/trinity/kcal_tdeabc.so
+%{tde_prefix}/%{_lib}/trinity/kcal_localdir.la
+%{tde_prefix}/%{_lib}/trinity/kcal_localdir.so
+%{tde_prefix}/%{_lib}/trinity/kcal_local.la
+%{tde_prefix}/%{_lib}/trinity/kcal_local.so
+%{tde_prefix}/%{_lib}/trinity/kcal_remote.la
+%{tde_prefix}/%{_lib}/trinity/kcal_remote.so
+%{tde_prefix}/%{_lib}/libkcal.so.*
+%{tde_prefix}/%{_lib}/libkcal_resourceremote.so.*
+%{tde_prefix}/%{_lib}/libkholidays.so.*
+%{tde_prefix}/share/apps/libkholidays/
+%dir %{tde_prefix}/share/services/tderesources/kcal
+%{tde_prefix}/share/services/tderesources/kcal/imap.desktop
+%{tde_prefix}/share/services/tderesources/kcal/tdeabc.desktop
+%{tde_prefix}/share/services/tderesources/kcal/local.desktop
+%{tde_prefix}/share/services/tderesources/kcal/localdir.desktop
+%{tde_prefix}/share/services/tderesources/kcal/remote.desktop
+%{tde_prefix}/share/services/tderesources/kcal_manager.desktop
 
 ##########
 
@@ -1403,14 +1385,14 @@ library.
 
 %files -n trinity-libkcal-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/libemailfunctions/
-%{tde_tdeincludedir}/libkcal
-%{tde_libdir}/libkcal.la
-%{tde_libdir}/libkcal.so
-%{tde_libdir}/libkcal_resourceremote.la
-%{tde_libdir}/libkcal_resourceremote.so
-%{tde_libdir}/libkholidays.la
-%{tde_libdir}/libkholidays.so
+%{tde_prefix}/include/tde/libemailfunctions/
+%{tde_prefix}/include/tde/libkcal
+%{tde_prefix}/%{_lib}/libkcal.la
+%{tde_prefix}/%{_lib}/libkcal.so
+%{tde_prefix}/%{_lib}/libkcal_resourceremote.la
+%{tde_prefix}/%{_lib}/libkcal_resourceremote.so
+%{tde_prefix}/%{_lib}/libkholidays.la
+%{tde_prefix}/%{_lib}/libkholidays.so
 
 ##########
 
@@ -1428,17 +1410,17 @@ This is the runtime package for programs that use the trinity-libtdepim library.
 
 %files -n trinity-libtdepim
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/plugins/designer/tdepimwidgets.la
-%{tde_tdelibdir}/plugins/designer/tdepimwidgets.so
-%{tde_tdelibdir}/plugins/designer/tdepartsdesignerplugin.la
-%{tde_tdelibdir}/plugins/designer/tdepartsdesignerplugin.so
-%{tde_libdir}/libtdepim.so.*
-%{tde_datadir}/apps/tdepimwidgets
-%{tde_datadir}/apps/libtdepim
-%{tde_datadir}/apps/tdepim
-%{tde_datadir}/config.kcfg/pimemoticons.kcfg
-%{tde_datadir}/icons/crystalsvg/22x22/actions/button_fewer.png
-%{tde_datadir}/icons/crystalsvg/22x22/actions/button_more.png
+%{tde_prefix}/%{_lib}/trinity/plugins/designer/tdepimwidgets.la
+%{tde_prefix}/%{_lib}/trinity/plugins/designer/tdepimwidgets.so
+%{tde_prefix}/%{_lib}/trinity/plugins/designer/tdepartsdesignerplugin.la
+%{tde_prefix}/%{_lib}/trinity/plugins/designer/tdepartsdesignerplugin.so
+%{tde_prefix}/%{_lib}/libtdepim.so.*
+%{tde_prefix}/share/apps/tdepimwidgets
+%{tde_prefix}/share/apps/libtdepim
+%{tde_prefix}/share/apps/tdepim
+%{tde_prefix}/share/config.kcfg/pimemoticons.kcfg
+%{tde_prefix}/share/icons/crystalsvg/22x22/actions/button_fewer.png
+%{tde_prefix}/share/icons/crystalsvg/22x22/actions/button_more.png
 
 ##########
 
@@ -1457,8 +1439,8 @@ library.
 
 %files -n trinity-libtdepim-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libtdepim.la
-%{tde_libdir}/libtdepim.so
+%{tde_prefix}/%{_lib}/libtdepim.la
+%{tde_prefix}/%{_lib}/libtdepim.so
 
 ##########
 
@@ -1471,8 +1453,8 @@ This is the runtime package for programs that use the libkgantt-trinity library.
 
 %files -n trinity-libkgantt
 %defattr(-,root,root,-)
-%{tde_libdir}/libkgantt.so.*
-%{tde_datadir}/apps/kgantt
+%{tde_prefix}/%{_lib}/libkgantt.so.*
+%{tde_prefix}/share/apps/kgantt
 
 ##########
 
@@ -1488,9 +1470,9 @@ library.
 
 %files -n trinity-libkgantt-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/kgantt
-%{tde_libdir}/libkgantt.la
-%{tde_libdir}/libkgantt.so
+%{tde_prefix}/include/tde/kgantt
+%{tde_prefix}/%{_lib}/libkgantt.la
+%{tde_prefix}/%{_lib}/libkgantt.so
 
 ##########
 
@@ -1507,20 +1489,20 @@ This is the runtime package for programs that use the libkleopatra-trinity libra
 
 %files -n trinity-libkleopatra
 %defattr(-,root,root,-)
-%config(noreplace) %{tde_confdir}/libkleopatrarc
-%{tde_libdir}/libgpgme++.so.*
-%{tde_libdir}/libkleopatra.so.*
-%{tde_libdir}/libkpgp.so.*
-%{tde_libdir}/libqgpgme.so.*
-%{tde_datadir}/apps/tdeconf_update/kpgp-3.1-upgrade-address-data.pl
-%{tde_datadir}/apps/tdeconf_update/kpgp.upd
-%{tde_datadir}/apps/libkleopatra/
-%{tde_datadir}/icons/crystalsvg/*/apps/dirmngr.png
-%{tde_datadir}/icons/crystalsvg/*/apps/gpg.png
-%{tde_datadir}/icons/crystalsvg/*/apps/gpg_agent.png
-%{tde_datadir}/icons/crystalsvg/*/apps/gpgsm.png
-%{tde_datadir}/icons/crystalsvg/*/apps/pinentry.png
-%{tde_datadir}/icons/crystalsvg/*/apps/scdaemon.png
+%config(noreplace) %{_sysconfdir}/trinity/libkleopatrarc
+%{tde_prefix}/%{_lib}/libgpgme++.so.*
+%{tde_prefix}/%{_lib}/libkleopatra.so.*
+%{tde_prefix}/%{_lib}/libkpgp.so.*
+%{tde_prefix}/%{_lib}/libqgpgme.so.*
+%{tde_prefix}/share/apps/tdeconf_update/kpgp-3.1-upgrade-address-data.pl
+%{tde_prefix}/share/apps/tdeconf_update/kpgp.upd
+%{tde_prefix}/share/apps/libkleopatra/
+%{tde_prefix}/share/icons/crystalsvg/*/apps/dirmngr.png
+%{tde_prefix}/share/icons/crystalsvg/*/apps/gpg.png
+%{tde_prefix}/share/icons/crystalsvg/*/apps/gpg_agent.png
+%{tde_prefix}/share/icons/crystalsvg/*/apps/gpgsm.png
+%{tde_prefix}/share/icons/crystalsvg/*/apps/pinentry.png
+%{tde_prefix}/share/icons/crystalsvg/*/apps/scdaemon.png
 
 ##########
 
@@ -1539,17 +1521,17 @@ libkleopatra-trinity library.
 
 %files -n trinity-libkleopatra-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/gpgme++/
-%{tde_tdeincludedir}/kleo/
-%{tde_tdeincludedir}/qgpgme/
-%{tde_libdir}/libgpgme++.la
-%{tde_libdir}/libgpgme++.so
-%{tde_libdir}/libkleopatra.la
-%{tde_libdir}/libkleopatra.so
-%{tde_libdir}/libkpgp.la
-%{tde_libdir}/libkpgp.so
-%{tde_libdir}/libqgpgme.la
-%{tde_libdir}/libqgpgme.so
+%{tde_prefix}/include/tde/gpgme++/
+%{tde_prefix}/include/tde/kleo/
+%{tde_prefix}/include/tde/qgpgme/
+%{tde_prefix}/%{_lib}/libgpgme++.la
+%{tde_prefix}/%{_lib}/libgpgme++.so
+%{tde_prefix}/%{_lib}/libkleopatra.la
+%{tde_prefix}/%{_lib}/libkleopatra.so
+%{tde_prefix}/%{_lib}/libkpgp.la
+%{tde_prefix}/%{_lib}/libkpgp.so
+%{tde_prefix}/%{_lib}/libqgpgme.la
+%{tde_prefix}/%{_lib}/libqgpgme.so
 
 ##########
 
@@ -1564,7 +1546,7 @@ an object tree.
 
 %files -n trinity-libkmime
 %defattr(-,root,root,-)
-%{tde_libdir}/libkmime.so.*
+%{tde_prefix}/%{_lib}/libkmime.so.*
 
 ##########
 
@@ -1578,8 +1560,8 @@ Requires:	trinity-libkmime = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-libkmime-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkmime.la
-%{tde_libdir}/libkmime.so
+%{tde_prefix}/%{_lib}/libkmime.la
+%{tde_prefix}/%{_lib}/libkmime.so
 
 ##########
 
@@ -1593,9 +1575,9 @@ library.
 
 %files -n trinity-libkpimexchange
 %defattr(-,root,root,-)
-%{tde_tdelibdir}/resourcecalendarexchange.la
-%{tde_tdelibdir}/resourcecalendarexchange.so
-%{tde_libdir}/libkpimexchange.so.*
+%{tde_prefix}/%{_lib}/trinity/resourcecalendarexchange.la
+%{tde_prefix}/%{_lib}/trinity/resourcecalendarexchange.so
+%{tde_prefix}/%{_lib}/libkpimexchange.so.*
 
 ##########
 
@@ -1612,11 +1594,11 @@ libkpimexchange-trinity library.
 
 %files -n trinity-libkpimexchange-devel
 %defattr(-,root,root,-)
-%dir %{tde_tdeincludedir}/tdepim
-%{tde_tdeincludedir}/tdepim/exchangeaccount.h
-%{tde_tdeincludedir}/tdepim/exchangeclient.h
-%{tde_libdir}/libkpimexchange.la
-%{tde_libdir}/libkpimexchange.so
+%dir %{tde_prefix}/include/tde/tdepim
+%{tde_prefix}/include/tde/tdepim/exchangeaccount.h
+%{tde_prefix}/include/tde/tdepim/exchangeclient.h
+%{tde_prefix}/%{_lib}/libkpimexchange.la
+%{tde_prefix}/%{_lib}/libkpimexchange.so
 
 ##########
 
@@ -1633,7 +1615,7 @@ library.
 
 %files -n trinity-libkpimidentities
 %defattr(-,root,root,-)
-%{tde_libdir}/libkpimidentities.so.*
+%{tde_prefix}/%{_lib}/libkpimidentities.so.*
 
 ##########
 
@@ -1647,8 +1629,8 @@ Requires:	trinity-libkpimidentities = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %files -n trinity-libkpimidentities-devel
 %defattr(-,root,root,-)
-%{tde_libdir}/libkpimidentities.la
-%{tde_libdir}/libkpimidentities.so
+%{tde_prefix}/%{_lib}/libkpimidentities.la
+%{tde_prefix}/%{_lib}/libkpimidentities.so
 
 ##########
 
@@ -1661,8 +1643,8 @@ This is the runtime package for programs that use the libksieve-trinity library.
 
 %files -n trinity-libksieve
 %defattr(-,root,root,-)
-%{tde_libdir}/libksieve.so.*
-%{tde_tdedocdir}/HTML/en/tdeioslave/sieve/
+%{tde_prefix}/%{_lib}/libksieve.so.*
+%{tde_prefix}/share/doc/tde/HTML/en/tdeioslave/sieve/
 
 ##########
 
@@ -1678,9 +1660,9 @@ library.
 
 %files -n trinity-libksieve-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/ksieve
-%{tde_libdir}/libksieve.la
-%{tde_libdir}/libksieve.so
+%{tde_prefix}/include/tde/ksieve
+%{tde_prefix}/%{_lib}/libksieve.la
+%{tde_prefix}/%{_lib}/libksieve.so
 
 ##########
 
@@ -1698,7 +1680,7 @@ This is the runtime library for packages using the ktnef-trinity library.
 
 %files -n trinity-libktnef
 %defattr(-,root,root,-)
-%{tde_libdir}/libktnef.so.*
+%{tde_prefix}/%{_lib}/libktnef.so.*
 
 ##########
 
@@ -1719,9 +1701,9 @@ ktnef-trinity library.
 
 %files -n trinity-libktnef-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/ktnef
-%{tde_libdir}/libktnef.la
-%{tde_libdir}/libktnef.so
+%{tde_prefix}/include/tde/ktnef
+%{tde_prefix}/%{_lib}/libktnef.la
+%{tde_prefix}/%{_lib}/libktnef.so
 
 ##########
 
@@ -1736,7 +1718,7 @@ This is the runtime package for programs that use the libmimelib-trinity library
 
 %files -n trinity-libmimelib
 %defattr(-,root,root,-)
-%{tde_libdir}/libmimelib.so.*
+%{tde_prefix}/%{_lib}/libmimelib.so.*
 
 ##########
 
@@ -1753,9 +1735,9 @@ libmimelib library.
 
 %files -n trinity-libmimelib-devel
 %defattr(-,root,root,-)
-%{tde_tdeincludedir}/mimelib/
-%{tde_libdir}/libmimelib.la
-%{tde_libdir}/libmimelib.so
+%{tde_prefix}/include/tde/mimelib/
+%{tde_prefix}/%{_lib}/libmimelib.la
+%{tde_prefix}/%{_lib}/libmimelib.so
 
 ##########
 
@@ -1770,26 +1752,26 @@ dialing calls, phonebook, and phone status monitoring.
 
 %files -n trinity-kmobile
 %defattr(-,root,root,-)
-%{tde_bindir}/kmobile
-%{tde_datadir}/icons/default.tde/32x32/devices/mobile_camera.png
-%{tde_datadir}/icons/default.tde/32x32/devices/mobile_musicplayer.png
-%{tde_datadir}/icons/default.tde/32x32/devices/mobile_organizer.png
-%{tde_datadir}/icons/default.tde/32x32/devices/mobile_phone.png
-%{tde_datadir}/icons/default.tde/32x32/devices/mobile_unknown.png
-%{tde_datadir}/icons/hicolor/*/apps/kmobile.png
-%{tde_datadir}/services/libkmobile_digicam.desktop
-%{tde_datadir}/services/libkmobile_gammu.desktop
-%{tde_datadir}/services/libkmobile_skeleton.desktop
-%{tde_datadir}/servicetypes/libkmobile.desktop
-%{tde_datadir}/apps/kmobile/
-%{tde_tdeappdir}/kmobile.desktop
-%{tde_tdelibdir}/libkmobile_skeleton.la
-%{tde_tdelibdir}/libkmobile_skeleton.so
-%{tde_libdir}/libkmobileclient.la
-%{tde_libdir}/libkmobileclient.so
-%{tde_libdir}/libkmobiledevice.la
-%{tde_libdir}/libkmobiledevice.so
-%{tde_tdedocdir}/HTML/en/kmobile/
+%{tde_prefix}/bin/kmobile
+%{tde_prefix}/share/icons/default.tde/32x32/devices/mobile_camera.png
+%{tde_prefix}/share/icons/default.tde/32x32/devices/mobile_musicplayer.png
+%{tde_prefix}/share/icons/default.tde/32x32/devices/mobile_organizer.png
+%{tde_prefix}/share/icons/default.tde/32x32/devices/mobile_phone.png
+%{tde_prefix}/share/icons/default.tde/32x32/devices/mobile_unknown.png
+%{tde_prefix}/share/icons/hicolor/*/apps/kmobile.png
+%{tde_prefix}/share/services/libkmobile_digicam.desktop
+%{tde_prefix}/share/services/libkmobile_gammu.desktop
+%{tde_prefix}/share/services/libkmobile_skeleton.desktop
+%{tde_prefix}/share/servicetypes/libkmobile.desktop
+%{tde_prefix}/share/apps/kmobile/
+%{tde_prefix}/share/applications/tde/kmobile.desktop
+%{tde_prefix}/%{_lib}/trinity/libkmobile_skeleton.la
+%{tde_prefix}/%{_lib}/trinity/libkmobile_skeleton.so
+%{tde_prefix}/%{_lib}/libkmobileclient.la
+%{tde_prefix}/%{_lib}/libkmobileclient.so
+%{tde_prefix}/%{_lib}/libkmobiledevice.la
+%{tde_prefix}/%{_lib}/libkmobiledevice.so
+%{tde_prefix}/share/doc/tde/HTML/en/kmobile/
 
 %prep -a
 # Fix 'ical2vcal' contains '/bin/perl' instead of '/usr/bin/perl'
@@ -1800,17 +1782,17 @@ fi
 
 %conf -p
 unset QTDIR QTINC QTLIB
-export PATH="%{tde_bindir}:${PATH}"
-export PKG_CONFIG_PATH="%{tde_libdir}/pkgconfig"
+export PATH="%{tde_prefix}/bin:${PATH}"
+export PKG_CONFIG_PATH="%{tde_prefix}/%{_lib}/pkgconfig"
 
 
 %install -a
 # Adds missing icons in 'hicolor' theme
-pushd "%{?buildroot}%{tde_datadir}/icons"
+pushd "%{?buildroot}%{tde_prefix}/share/icons"
 for i in {16,32,48};           do %__cp crystalsvg/"$i"x"$i"/apps/kandy.png                           hicolor/"$i"x"$i"/apps/kandy.png      ;done
-for i in {16,22,32,48,64,128}; do %__cp %{tde_datadir}/icons/crystalsvg/"$i"x"$i"/places/network.png  hicolor/"$i"x"$i"/apps/kleopatra.png  ;done
+for i in {16,22,32,48,64,128}; do %__cp %{tde_prefix}/share/icons/crystalsvg/"$i"x"$i"/places/network.png  hicolor/"$i"x"$i"/apps/kleopatra.png  ;done
 popd
 
 # Links duplicate files
-%fdupes "%{?buildroot}%{tde_datadir}"
+%fdupes "%{?buildroot}%{tde_prefix}/share"
 
