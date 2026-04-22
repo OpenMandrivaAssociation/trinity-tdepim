@@ -9,12 +9,6 @@
 #  Having KDE libraries may cause FTBFS here !
 
 # TDE variables
-%define tde_epoch 2
-%if "%{?tde_version}" == ""
-%define tde_version 14.1.5
-%endif
-%define pkg_rel 3
-
 %define tde_pkg tdepim
 %define tde_prefix /opt/trinity
 
@@ -30,15 +24,15 @@
 
 Name:		trinity-%{tde_pkg}
 Summary:	Personal Information Management apps from the official Trinity release
-Version:	%{tde_version}
-Release:	%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
+Version:	14.1.5
+Release:	4
 Group:		Applications/Productivity
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
 
-Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/core/%{tarball_name}-%{version}%{?preversion:~%{preversion}}.tar.xz
+Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{version}/main/core/%{tarball_name}-%{version}.tar.xz
 Source1:	%{name}-rpmlintrc
 
 BuildSystem:    cmake
@@ -60,13 +54,13 @@ BuildOption:    -DWITH_GNOKII=%{!?with_gnokii:OFF}%{?with_gnokii:ON}
 BuildOption:    -DWITH_XSCREENSAVER=%{!?with_xscreensaver:OFF}%{?with_xscreensaver:ON}
 BuildOption:    -DBUILD_KITCHENSYNC=%{!?with_kitchensync:OFF}%{?with_kitchensync:ON}
 
-BuildRequires:	trinity-arts-devel >= %{tde_epoch}:1.5.10
-BuildRequires:	trinity-tdelibs-devel >= %{tde_version}
-BuildRequires:	trinity-tdebase-devel >= %{tde_version}
-BuildRequires:	libcaldav-devel >= %{tde_epoch}:0.6.5
-BuildRequires:	libcarddav-devel >= %{tde_epoch}:0.6.2
+BuildRequires:	trinity-arts-devel >= 1.5.10
+BuildRequires:	trinity-tdelibs-devel >= %{version}
+BuildRequires:	trinity-tdebase-devel >= %{version}
+BuildRequires:	%{_lib}caldav-devel >= 0.6.5
+BuildRequires:	%{_lib}carddav-devel >= 0.6.2
 
-BuildRequires:	trinity-tde-cmake >= %{tde_version}
+BuildRequires:	trinity-tde-cmake >= %{version}
 
 %{!?with_clang:BuildRequires:	gcc-c++}
 
@@ -130,43 +124,43 @@ BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xrender)
 
 
-Requires:	trinity-libtdepim = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-kfile-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-wizards = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-akregator = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kalarm = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kandy = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-karm = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kleopatra = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kmail = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kmailcvt = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kmobile = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knode = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knotes = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kode = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-konsolekalendar = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kontact = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-korn = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-ktnef = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libindex = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkcal = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkgantt = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkleopatra = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkmime = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkpimexchange = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkpimidentities = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libksieve = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libktnef = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libmimelib = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libtdepim = %{EVRD}
+Requires:	%{name}-kfile-plugins = %{EVRD}
+Requires:	%{name}-tdeio-plugins = %{EVRD}
+Requires:	%{name}-tderesources = %{EVRD}
+Requires:	%{name}-wizards = %{EVRD}
+Requires:	trinity-akregator = %{EVRD}
+Requires:	trinity-kaddressbook = %{EVRD}
+Requires:	trinity-kalarm = %{EVRD}
+Requires:	trinity-kandy = %{EVRD}
+Requires:	trinity-karm = %{EVRD}
+Requires:	trinity-kleopatra = %{EVRD}
+Requires:	trinity-kmail = %{EVRD}
+Requires:	trinity-kmailcvt = %{EVRD}
+Requires:	trinity-kmobile = %{EVRD}
+Requires:	trinity-knode = %{EVRD}
+Requires:	trinity-knotes = %{EVRD}
+Requires:	trinity-kode = %{EVRD}
+Requires:	trinity-konsolekalendar = %{EVRD}
+Requires:	trinity-kontact = %{EVRD}
+Requires:	trinity-korganizer = %{EVRD}
+Requires:	trinity-korn = %{EVRD}
+Requires:	trinity-ktnef = %{EVRD}
+Requires:	trinity-libindex = %{EVRD}
+Requires:	trinity-libkcal = %{EVRD}
+Requires:	trinity-libkgantt = %{EVRD}
+Requires:	trinity-libkleopatra = %{EVRD}
+Requires:	trinity-libkmime = %{EVRD}
+Requires:	trinity-libkpimexchange = %{EVRD}
+Requires:	trinity-libkpimidentities = %{EVRD}
+Requires:	trinity-libksieve = %{EVRD}
+Requires:	trinity-libktnef = %{EVRD}
+Requires:	trinity-libmimelib = %{EVRD}
 
-Obsoletes:	trinity-kdepim < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdepim = %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	tdepim < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	tdepim = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kdepim < %{EVRD}
+Provides:	trinity-kdepim = %{EVRD}
+Obsoletes:	tdepim < %{EVRD}
+Provides:	tdepim = %{EVRD}
 
 %description
 This metapackage includes a collection of Personal Information Management
@@ -181,35 +175,35 @@ This metapackage includes a collection of Personal Information Management
 Summary:	Development files for %{name}
 Group:		Development/Libraries/Other
 
-Obsoletes:	tdepim-cmake < %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-cmake < %{EVRD}
 
-Obsoletes:	trinity-kdepim-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-kdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	tdepim-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	tdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	trinity-kdepim-devel < %{EVRD}
+Provides:	trinity-kdepim-devel = %{EVRD}
+Obsoletes:	tdepim-devel < %{EVRD}
+Provides:	tdepim-devel = %{EVRD}
 
-Requires:	%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-akregator-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kaddressbook-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-karm-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kmail-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knode-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knotes-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kode-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kontact-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-korganizer-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libindex-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkcal-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkgantt-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkleopatra-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkmime-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkpimexchange-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkpimidentities-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libksieve-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libktnef-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libmimelib-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-tderesources-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	%{name} = %{EVRD}
+Requires:	trinity-akregator-devel = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
+Requires:	trinity-kaddressbook-devel = %{EVRD}
+Requires:	trinity-karm-devel = %{EVRD}
+Requires:	trinity-kmail-devel = %{EVRD}
+Requires:	trinity-knode-devel = %{EVRD}
+Requires:	trinity-knotes-devel = %{EVRD}
+Requires:	trinity-kode-devel = %{EVRD}
+Requires:	trinity-kontact-devel = %{EVRD}
+Requires:	trinity-korganizer-devel = %{EVRD}
+Requires:	trinity-libindex-devel = %{EVRD}
+Requires:	trinity-libkcal-devel = %{EVRD}
+Requires:	trinity-libkgantt-devel = %{EVRD}
+Requires:	trinity-libkleopatra-devel = %{EVRD}
+Requires:	trinity-libkmime-devel = %{EVRD}
+Requires:	trinity-libkpimexchange-devel = %{EVRD}
+Requires:	trinity-libkpimidentities-devel = %{EVRD}
+Requires:	trinity-libksieve-devel = %{EVRD}
+Requires:	trinity-libktnef-devel = %{EVRD}
+Requires:	trinity-libmimelib-devel = %{EVRD}
+Requires:	%{name}-tderesources-devel = %{EVRD}
 
 %description devel
 This metapackage includes all development files for TDE PIM.
@@ -224,8 +218,8 @@ It also contains the CMAKE macros.
 %package -n trinity-akregator
 Summary:	RSS feed aggregator for TDE
 Group:		Applications/Internet
-Requires:	trinity-libtdepim = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkcal = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libtdepim = %{EVRD}
+Requires:	trinity-libkcal = %{EVRD}
 
 %description -n trinity-akregator
 aKregator is a fast, lightweight, and intuitive feed reader program
@@ -261,7 +255,7 @@ thousands of internet feeds in a quick, efficient, and familiar way.
 %package -n trinity-akregator-devel
 Summary:	Development files for trinity-akregator
 Group:		Development/Libraries/Other
-Requires:	trinity-akregator = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-akregator = %{EVRD}
 
 %description -n trinity-akregator-devel
 %{summary}
@@ -288,7 +282,7 @@ Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
 %endif
 Requires:	trinity-tdebase-tdeio-pim-plugins
-Requires:	%{name}-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	%{name}-tderesources = %{EVRD}
 
 %description -n trinity-kaddressbook
 KAddressBook is the main address book application for TDE; it enables you
@@ -341,7 +335,7 @@ LDAP servers, and SQL databases.
 %package -n trinity-kaddressbook-devel
 Summary:	Development files for trinity-kaddressbook
 Group:		Development/Libraries/Other
-Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kaddressbook = %{EVRD}
 
 %description -n trinity-kaddressbook-devel
 %{summary}
@@ -358,7 +352,7 @@ Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
 %package -n trinity-kalarm
 Summary:	Trinity alarm message, command and email scheduler
 Group:		Applications/Communications
-Requires:	trinity-libkpimidentities = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkpimidentities = %{EVRD}
 
 %description -n trinity-kalarm
 KAlarm provides a graphical interface to schedule personal timed events -
@@ -460,7 +454,7 @@ Group:		Development/Libraries/Other
 Summary:	TDE File dialog plugins for palm and vcf files
 Group:		Environment/Libraries
 
-Obsoletes:	tdepim-kfile-plugins < %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-kfile-plugins < %{EVRD}
 
 %description kfile-plugins
 File dialog plugins for palm and vcf files.
@@ -480,9 +474,9 @@ File dialog plugins for palm and vcf files.
 Summary:	Trinity PIM I/O Slaves
 Group:		Environment/Libraries
 
-Obsoletes:	tdepim-kio-plugins < %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	trinity-tdepim-kio-plugins < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-tdepim-kio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-kio-plugins < %{EVRD}
+Obsoletes:	trinity-tdepim-kio-plugins < %{EVRD}
+Provides:	trinity-tdepim-kio-plugins = %{EVRD}
 
 %description tdeio-plugins
 This package includes the pim kioslaves. This includes imap4, sieve,
@@ -517,15 +511,15 @@ and mbox.
 %package tderesources
 Summary:	Trinity pim resource plugins
 Group:		Environment/Libraries
-#Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
-#Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
-#Requires:	trinity-knotes = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	libcaldav
-Requires:	libcarddav
+#Requires:	trinity-kaddressbook = %{EVRD}
+#Requires:	trinity-korganizer = %{EVRD}
+#Requires:	trinity-knotes = %{EVRD}
+Requires:	%{_lib}caldav0
+Requires:	%{_lib}carddav0
 
-Obsoletes:	tdepim-kresources < %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	trinity-tdepim-kresources < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-tdepim-kresources = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-kresources < %{EVRD}
+Obsoletes:	trinity-tdepim-kresources < %{EVRD}
+Provides:	trinity-tdepim-kresources = %{EVRD}
 
 %description tderesources
 This package includes several plugins needed to interface with groupware
@@ -635,13 +629,13 @@ tracking feature plans.
 %package tderesources-devel
 Summary:	Development files for tderesources
 Group:		Development/Libraries/Other
-Requires:	%{name}-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	libcaldav
-Requires:	libcarddav
+Requires:	%{name}-tderesources = %{EVRD}
+Requires:	%{_lib}caldav0
+Requires:	%{_lib}carddav0
 
-Obsoletes:	tdepim-tderesources-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Obsoletes:	trinity-tdepim-kresources-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	trinity-tdepim-kresources-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-tderesources-devel < %{EVRD}
+Obsoletes:	trinity-tdepim-kresources-devel < %{EVRD}
+Provides:	trinity-tdepim-kresources-devel = %{EVRD}
 
 %description tderesources-devel
 %{summary}
@@ -704,7 +698,7 @@ Provides:	trinity-tdepim-kresources-devel = %{?epoch:%{epoch}:}%{version}-%{rele
 Summary:	Trinity server configuration wizards
 Group:		Applications/Communications
 
-Obsoletes:	tdepim-wizards < %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	tdepim-wizards < %{EVRD}
 
 %description wizards
 This package contains TDE-based wizards for configuring eGroupware,
@@ -809,8 +803,8 @@ Requires:       %{_lib}sasl2-plug-ldapdb
 Requires:       %{_lib}sasl2-plug-login
 Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
-Requires:	%{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-tdebase-tdeio-pim-plugins >= %{tde_version}
+Requires:	%{name}-tdeio-plugins = %{EVRD}
+Requires:	trinity-tdebase-tdeio-pim-plugins >= %{version}
 
 # GPG support
 Requires:	gnupg
@@ -819,9 +813,9 @@ Requires:	gnupg
 Requires:	pinentry
 
 Requires:	procmail
-Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kleopatra = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-tdebase-tdeio-pim-plugins >= %{tde_version}
+Requires:	trinity-kaddressbook = %{EVRD}
+Requires:	trinity-kleopatra = %{EVRD}
+Requires:	trinity-tdebase-tdeio-pim-plugins >= %{version}
 
 Provides: imap-client, mail-reader
 
@@ -912,7 +906,7 @@ Group:		Development/Libraries/Other
 %package -n trinity-kmailcvt
 Summary:	Trinity KMail mail folder converter
 Group:		Applications/Communications
-Requires:	trinity-kmail = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kmail = %{EVRD}
 
 %description -n trinity-kmailcvt
 Converts mail folders to KMail format.  Formats supported for import
@@ -959,7 +953,7 @@ signatures.
 %package -n trinity-knode-devel
 Summary:	Development files for trinity-knode
 Group:		Development/Libraries/Other
-Requires:	trinity-knode = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-knode = %{EVRD}
 
 %description -n trinity-knode-devel
 %{summary}
@@ -974,7 +968,7 @@ Requires:	trinity-knode = %{?epoch:%{epoch}:}%{version}-%{release}
 %package -n trinity-knotes
 Summary:	Trinity sticky notes
 Group:		Applications/Utilities
-Requires:	trinity-tdepim-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-tdepim-tderesources = %{EVRD}
 
 %description -n trinity-knotes
 KNotes is a program that lets you write sticky notes. The notes are saved
@@ -1003,8 +997,8 @@ program.  The program supports printing and mailing your notes.
 %package -n trinity-knotes-devel
 Summary:	Development files for knots
 Group:		Development/Libraries/Other
-Requires:	trinity-knotes = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-tderesources-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-knotes = %{EVRD}
+Requires:	%{name}-tderesources-devel = %{EVRD}
 
 %description -n trinity-knotes-devel
 %{summary}
@@ -1038,7 +1032,7 @@ described by RelaxNG schemes.
 %package -n trinity-kode-devel
 Summary:	Development files for trinity-kode
 Group:		Development/Libraries/Other
-Requires:	trinity-kode = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kode = %{EVRD}
 
 %description -n trinity-kode-devel
 %{summary}
@@ -1071,12 +1065,12 @@ frontend to manage your calendars.
 %package -n trinity-kontact
 Summary:	Trinity pim application
 Group:		Applications/Communications
-Requires:	trinity-kmail = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-kaddressbook = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knode = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-knotes = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-akregator = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kmail = %{EVRD}
+Requires:	trinity-korganizer = %{EVRD}
+Requires:	trinity-kaddressbook = %{EVRD}
+Requires:	trinity-knode = %{EVRD}
+Requires:	trinity-knotes = %{EVRD}
+Requires:	trinity-akregator = %{EVRD}
 
 %description -n trinity-kontact
 Kontact is the integrated solution to your personal information management
@@ -1129,7 +1123,7 @@ scheduling, address book and other PIM functionality.
 %package -n trinity-kontact-devel
 Summary:	Development files for kontact
 Group:		Development/Libraries/Other
-Requires:	trinity-kontact = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-kontact = %{EVRD}
 
 %description -n trinity-kontact-devel
 %{summary}
@@ -1157,9 +1151,9 @@ Requires:       %{_lib}sasl2-plug-login
 Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
 %endif
-Requires:	trinity-libkpimidentities = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkpimexchange = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	%{name}-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkpimidentities = %{EVRD}
+Requires:	trinity-libkpimexchange = %{EVRD}
+Requires:	%{name}-tderesources = %{EVRD}
 Requires:	perl
 
 %description -n trinity-korganizer
@@ -1217,7 +1211,7 @@ installed.
 %package -n trinity-korganizer-devel
 Summary:	Development files for korganizer
 Group:		Development/Libraries/Other
-Requires:	trinity-korganizer = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-korganizer = %{EVRD}
 
 %description -n trinity-korganizer-devel
 %{summary}
@@ -1251,7 +1245,7 @@ Requires:       %{_lib}sasl2-plug-ldapdb
 Requires:       %{_lib}sasl2-plug-login
 Requires:       %{_lib}sasl2-plug-ntlm
 Requires:       %{_lib}sasl2-plug-plain
-Requires:	%{name}-tdeio-plugins = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	%{name}-tdeio-plugins = %{EVRD}
 
 %description -n trinity-korn
 Korn is a TDE mail checker that can display a small summary in the Kicker
@@ -1315,7 +1309,7 @@ This is the runtime package for programs that use the libindex library.
 %package -n trinity-libindex-devel
 Summary:	Trinity indexing library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libindex = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libindex = %{EVRD}
 
 %description -n trinity-libindex-devel
 This library provides text indexing and is currently used by KMail
@@ -1336,8 +1330,8 @@ library.
 %package -n trinity-libkcal
 Summary:	Trinity calendaring library
 Group:		Environment/Libraries
-#Requires:	%{name}-tderesources = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkmime = %{?epoch:%{epoch}:}%{version}-%{release}
+#Requires:	%{name}-tderesources = %{EVRD}
+Requires:	trinity-libkmime = %{EVRD}
 
 %description -n trinity-libkcal
 This library provides a C++ API for handling the vCalendar and iCalendar
@@ -1372,9 +1366,9 @@ This is the runtime package for programs that use the libkcal-trinity library.
 %package -n trinity-libkcal-devel
 Summary:	Trinity calendaring library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libkcal = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libktnef-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkcal = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
+Requires:	trinity-libktnef-devel = %{EVRD}
 
 %description -n trinity-libkcal-devel
 This library provides a C++ API for handling the vCalendar and iCalendar
@@ -1399,11 +1393,11 @@ library.
 %package -n trinity-libtdepim
 Summary:	Trinity PIM library
 Group:		Environment/Libraries
-Requires:	trinity-libkcal = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libktnef = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkcal = %{EVRD}
+Requires:	trinity-libktnef = %{EVRD}
 
-Obsoletes:	libtdepim < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	libtdepim = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	libtdepim < %{EVRD}
+Provides:	libtdepim = %{EVRD}
 
 %description -n trinity-libtdepim
 This is the runtime package for programs that use the trinity-libtdepim library.
@@ -1427,11 +1421,11 @@ This is the runtime package for programs that use the trinity-libtdepim library.
 %package -n trinity-libtdepim-devel
 Summary:	Trinity PIM library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libtdepim = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libtdepim = %{EVRD}
 Requires:	trinity-tdelibs-devel >= %{version}
 
-Obsoletes:	libtdepim-devel < %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:	libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:	libtdepim-devel < %{EVRD}
+Provides:	libtdepim-devel = %{EVRD}
 
 %description -n trinity-libtdepim-devel
 This is the development package which contains the headers for the libtdepim-trinity
@@ -1461,8 +1455,8 @@ This is the runtime package for programs that use the libkgantt-trinity library.
 %package -n trinity-libkgantt-devel
 Summary:	Trinity gantt charting library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libkgantt = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkgantt = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
 
 %description -n trinity-libkgantt-devel
 This is the development package which contains the headers for the libkgantt-trinity
@@ -1509,8 +1503,8 @@ This is the runtime package for programs that use the libkleopatra-trinity libra
 %package -n trinity-libkleopatra-devel
 Summary:	Trinity GnuPG interface libraries [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libkleopatra = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkleopatra = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
 
 %description -n trinity-libkleopatra-devel
 This library is used by several TDE applications to interface to the
@@ -1553,7 +1547,7 @@ an object tree.
 %package -n trinity-libkmime-devel
 Summary:	Development files for libkmime
 Group:		Development/Libraries/Other
-Requires:	trinity-libkmime = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkmime = %{EVRD}
 
 %description -n trinity-libkmime-devel
 %{summary}
@@ -1584,9 +1578,9 @@ library.
 %package -n trinity-libkpimexchange-devel
 Summary:	Trinity PIM Exchange library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libkpimexchange = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libkcal-devel = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkpimexchange = %{EVRD}
+Requires:	trinity-libkcal-devel = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
 
 %description -n trinity-libkpimexchange-devel
 This is the development package which contains the headers for the
@@ -1622,7 +1616,7 @@ library.
 %package -n trinity-libkpimidentities-devel
 Summary:	Development files for libkpimidentities
 Group:		Development/Libraries/Other
-Requires:	trinity-libkpimidentities = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libkpimidentities = %{EVRD}
 
 %description -n trinity-libkpimidentities-devel
 %{summary}
@@ -1651,8 +1645,8 @@ This is the runtime package for programs that use the libksieve-trinity library.
 %package -n trinity-libksieve-devel
 Summary:	Trinity mail/news message filtering library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libksieve = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libksieve = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
 
 %description -n trinity-libksieve-devel
 This is the development package which contains the headers for the libksieve-trinity
@@ -1687,8 +1681,8 @@ This is the runtime library for packages using the ktnef-trinity library.
 %package -n trinity-libktnef-devel
 Summary:	KTNEF handler library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libktnef = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	trinity-libtdepim-devel = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libktnef = %{EVRD}
+Requires:	trinity-libtdepim-devel = %{EVRD}
 
 %description -n trinity-libktnef-devel
 This library handles mail attachments using the TNEF format. These
@@ -1725,7 +1719,7 @@ This is the runtime package for programs that use the libmimelib-trinity library
 %package -n trinity-libmimelib-devel
 Summary:	Trinity mime library [development]
 Group:		Development/Libraries/Other
-Requires:	trinity-libmimelib = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	trinity-libmimelib = %{EVRD}
 
 %description -n trinity-libmimelib-devel
 This library is used by several TDE applications to handle mime types.
