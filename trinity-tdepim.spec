@@ -18,14 +18,14 @@
 %define _disable_rebuild_configure 1
 
 # fixes error: Empty %files file …/debugsourcefiles.list
-%define _debugsource_template %{nil}
+%undefine _debugsource_template
 
 %define tarball_name %{tde_pkg}-trinity
 
 Name:		trinity-%{tde_pkg}
 Summary:	Personal Information Management apps from the official Trinity release
-Version:	14.1.5
-Release:	4
+Version:	14.1.6
+Release:	1
 Group:		Applications/Productivity
 URL:		http://www.trinitydesktop.org/
 
@@ -54,12 +54,11 @@ BuildOption:    -DWITH_GNOKII=%{!?with_gnokii:OFF}%{?with_gnokii:ON}
 BuildOption:    -DWITH_XSCREENSAVER=%{!?with_xscreensaver:OFF}%{?with_xscreensaver:ON}
 BuildOption:    -DBUILD_KITCHENSYNC=%{!?with_kitchensync:OFF}%{?with_kitchensync:ON}
 
-BuildRequires:	trinity-arts-devel >= 1.5.10
+BuildRequires:	trinity-arts-devel >= %{version}
 BuildRequires:	trinity-tdelibs-devel >= %{version}
 BuildRequires:	trinity-tdebase-devel >= %{version}
-BuildRequires:	%{_lib}caldav-devel >= 0.6.5
-BuildRequires:	%{_lib}carddav-devel >= 0.6.2
-
+BuildRequires:	%{_lib}caldav-devel >= %{version}
+BuildRequires:	%{_lib}carddav-devel >= %{version}
 BuildRequires:	trinity-tde-cmake >= %{version}
 
 %{!?with_clang:BuildRequires:	gcc-c++}
@@ -109,11 +108,6 @@ BuildRequires:  pkgconfig(libsasl2)
 BuildRequires:  pkgconfig(xcomposite)
 
 # XSCREENSAVER support
-#  RHEL 4: disabled
-#  RHEL 6: available in EPEL
-#  RHEL 7: available in NUX
-#  RHEL 8: available in EPEL
-#  RHEL 9: available in EPEL
 %if %{with xscreensaver}
 BuildRequires:	xscreensaver
 BuildRequires:	xscreensaver-base
